@@ -13,7 +13,7 @@ export const errorHandler = (
   res: Response,
   _next: NextFunction,
 ) => {
-  let code = 500;
+  let code: number;
   let error = e.message;
   let errorCode: string | undefined;
   logger.warn({ detail: "Request failed", error: e });
