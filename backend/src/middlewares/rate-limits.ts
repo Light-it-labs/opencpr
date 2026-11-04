@@ -26,7 +26,7 @@ const isKioskTraffic = (req: Request) =>
 
 export const kioskRateLimit = rateLimit({
   windowMs: milliseconds({ minutes: 1 }),
-  max: KIOSK_REQUESTS_PER_MINUTE,
+  limit: KIOSK_REQUESTS_PER_MINUTE,
   skip: (req) => !isKioskTraffic(req),
   standardHeaders: true,
   legacyHeaders: false,
@@ -38,7 +38,7 @@ export const kioskRateLimit = rateLimit({
 
 export const generalRateLimit = rateLimit({
   windowMs: milliseconds({ minutes: 1 }),
-  max: GENERAL_REQUESTS_PER_MINUTE,
+  limit: GENERAL_REQUESTS_PER_MINUTE,
   skip: isKioskTraffic,
   standardHeaders: true,
   legacyHeaders: false,

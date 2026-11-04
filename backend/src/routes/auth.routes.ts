@@ -9,10 +9,10 @@ export const AuthRouter = Router();
 
 // On top of the global limit: these endpoints are unauthenticated and either
 // send email or are guessing targets, so each gets its own, tighter, budget.
-const perMinute = (max: number) =>
+const perMinute = (limit: number) =>
   rateLimit({
     windowMs: milliseconds({ minutes: 1 }),
-    max,
+    limit,
     standardHeaders: true,
     legacyHeaders: false,
     message: {
