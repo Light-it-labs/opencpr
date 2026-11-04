@@ -68,7 +68,6 @@ export const Calendar = ({
             : "flex w-full items-center gap-1 rounded-md pr-1 pl-2 text-sm [&>svg]:size-3.5 [&>svg]:text-text-default-secondary",
           defaultClassNames.caption_label,
         ),
-        table: "w-full border-collapse",
         weekdays: cn("flex gap-2", defaultClassNames.weekdays),
         weekday: cn(
           defaultClassNames.weekday,
