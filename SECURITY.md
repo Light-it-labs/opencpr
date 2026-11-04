@@ -4,7 +4,7 @@ OpenCPR stores personal data about booth visitors (name, email and their runs) a
 
 ## Reporting a vulnerability
 
-Do not open a public issue. Email support@opencpr.org with:
+Do not open a public issue. Report it privately with GitHub's [Report a vulnerability](https://github.com/Light-it-labs/opencpr/security/advisories/new) form, or email support@opencpr.org, with:
 
 - what the problem is and where it is (folder, file or endpoint);
 - how to reproduce it, or a proof of concept;
