@@ -10,5 +10,4 @@ export * from "./label";
 export * from "./navigation-menu";
 export * from "./radio-group";
 export * from "./select";
-export * from "./table";
 export * from "./toast";
