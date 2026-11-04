@@ -1,0 +1,31 @@
+name: Booth or setup help
+description: Help building the sensor, hosting the software or setting up a booth.
+labels: [question]
+body:
+  - type: markdown
+    attributes:
+      value: Check the [FAQ](https://github.com/Light-it-labs/opencpr/blob/main/docs/faq.md) first; many setup questions are answered there.
+  - type: dropdown
+    id: stage
+    attributes:
+      label: Stage
+      options:
+        - Planning and buying
+        - Building the sensor
+        - Hosting the software
+        - Booth computer
+        - Running a booth
+    validations:
+      required: true
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: What you are trying to do, what you tried, and what happened.
+    validations:
+      required: true
+  - type: textarea
+    id: setup
+    attributes:
+      label: Your setup
+      description: Board, sensor, booth computer and operating system, how you host the software.

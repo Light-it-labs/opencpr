@@ -1,0 +1,113 @@
+name: opencpr
+
+x-backend: &backend
+  build: ./backend
+  image: opencpr-backend
+  env_file: .env
+  environment:
+    MYSQL_HOST: mysql
+    MYSQL_PORT: 3306
+    REDIS_HOST: redis
+    REDIS_PORT: 6379
+    SMTP_HOST: ${SMTP_HOST:-mailpit}
+    SMTP_PORT: ${SMTP_PORT:-1025}
+
+services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    ports:
+      - "${MYSQL_HOST_PORT:-3306}:3306"
+    volumes:
+      - db:/var/lib/mysql
+    healthcheck:
+      # TCP on purpose: the init-time temporary server answers a socket ping
+      # before the database and user exist.
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD"]
+      interval: 5s
+      timeout: 5s
+      retries: 24
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "${REDIS_HOST_PORT:-6379}:6379"
+    volumes:
+      - redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  # Catches every email the API sends; read them at http://localhost:8025.
+  mailpit:
+    image: axllent/mailpit:v1.31.6
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+
+  migrate:
+    <<: *backend
+    # The seed resets the database, so it runs only on the first start; the
+    # marker lives in a volume and goes away with `docker compose down -v`.
+    command: sh -c "pnpm db:migrate && if [ ! -f /seed/done ]; then pnpm db:seed && touch /seed/done; fi"
+    volumes:
+      - seed:/seed
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  api:
+    <<: *backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  kiosk:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: ${VITE_API_URL}
+        VITE_PUBLIC_URL: ${VITE_PUBLIC_URL}
+        VITE_APP_ENV: ${VITE_APP_ENV:-production}
+        VITE_SENTRY_DSN: ${VITE_SENTRY_DSN:-}
+        VITE_SENTRY_TRACE_PROPAGATION_TARGET_REGEX: ${VITE_SENTRY_TRACE_PROPAGATION_TARGET_REGEX:-}
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
+
+  admin:
+    build:
+      context: ./admin-portal
+      args:
+        VITE_APP_NAME: ${VITE_APP_NAME}
+        VITE_API_URL: ${VITE_API_URL}
+        VITE_APP_ENV: ${VITE_APP_ENV:-production}
+        VITE_SENTRY_DSN: ${VITE_SENTRY_DSN:-}
+        VITE_SENTRY_TRACE_PROPAGATION_TARGET_REGEX: ${VITE_SENTRY_TRACE_PROPAGATION_TARGET_REGEX:-}
+    ports:
+      - "5174:80"
+    depends_on:
+      - api
+
+volumes:
+  db:
+  redis:
+  seed:

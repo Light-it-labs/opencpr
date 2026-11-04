@@ -1,0 +1,234 @@
+@import url('https://fonts.googleapis.com/css2?family=Gabarito:wght@400;500;600;700;800&family=Funnel+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+
+@import "tailwindcss";
+
+@plugin "tailwindcss-animate";
+
+/*
+ * Kiosk layout contract. Every screen is exactly one viewport tall and never
+ * scrolls: on a fixed panel a scrollbar means content the participant will
+ * never find, and a stray palm drag must not move the game.
+ *
+ * dvh rather than vh so a browser chrome bar cannot push content off the fold.
+ */
+html,
+body,
+#root {
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+}
+
+/*
+ * The claim form runs on the participant's phone, not the kiosk. iOS Safari
+ * scrolls the window to reveal a focused input even under overflow: hidden,
+ * and a page locked to one viewport has nothing below it to scroll into, so
+ * each focus uncovered a larger empty band above the keyboard.
+ */
+html:has([data-phone-page]),
+html:has([data-phone-page]) body,
+html:has([data-phone-page]) #root {
+  height: auto;
+  max-height: none;
+  overflow: visible;
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Touchscreen: no double-tap zoom, no text dragged out of the layout, no
+   * grey flash on every tap. */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  overscroll-behavior: none;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+/*
+ * One light theme, by design: the kiosk stands in a lit hall and the brand is
+ * cream, paper and ink with red accents. There is no dark variant.
+ */
+:root {
+  --background: #F3EFE6;
+  --foreground: #2A171B;
+  --card: #FBF9F4;
+  --card-foreground: #2A171B;
+  --popover: #FBF9F4;
+  --popover-foreground: #2A171B;
+  --primary: #B23A2E;
+  --primary-foreground: #FBF9F4;
+  --secondary: #2A171B;
+  --secondary-foreground: #FBF9F4;
+  --tertiary: #C4473A;
+  --tertiary-foreground: #FBF9F4;
+  --forth: #A8352A;
+  --muted: #F7E2DD;
+  --muted-secondary: #F2C6BE;
+  --muted-foreground: #6E5559;
+  --accent: #F2C6BE;
+  --accent-foreground: #2A171B;
+  --destructive: #C4473A;
+  --destructive-foreground: #FBF9F4;
+  --border: #E1DACB;
+  --input: #CFC6B5;
+  --ring: #2A171B;
+
+  /* Execution-screen gauge cards: paper, pink and pink-2, lightest to deepest
+   * so the three read as one graduated row on the cream page. */
+  --metric-box: #FBF9F4;
+  --metric-box-secondary: #F7E2DD;
+  --metric-box-tertiary: #F2C6BE;
+
+  /*
+   * Results screen. Its own scale rather than the kiosk's, because it grades a
+   * run: high, mid and low each need an ink colour and a tint of it, which none
+   * of the tokens above provide. The inks are dark enough to read on their own
+   * tints and on paper from a couple of metres away.
+   */
+  --results-page: #F3EFE6;
+  --results-surface: #FBF9F4;
+  --results-ink: #2A171B;
+  --results-high: #1F8A5B;
+  --results-mid: #B9770E;
+  --results-low: #C4473A;
+  --results-tint-high: #DDF1E6;
+  --results-tint-mid: #FBECCF;
+  --results-tint-low: #F7E2DD;
+}
+
+@theme inline {
+  --font-sans: "Funnel Sans", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --font-heading: "Gabarito", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --text-logo-hero: 12rem;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-tertiary: var(--tertiary);
+  --color-tertiary-foreground: var(--tertiary-foreground);
+  --color-forth: var(--forth);
+  --color-muted: var(--muted);
+  --color-muted-secondary: var(--muted-secondary);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius: 0.5rem;
+  --color-metric-box: var(--metric-box);
+  --color-metric-box-secondary: var(--metric-box-secondary);
+  --color-metric-box-tertiary: var(--metric-box-tertiary);
+  --color-results-page: var(--results-page);
+  --color-results-surface: var(--results-surface);
+  --color-results-ink: var(--results-ink);
+  --color-results-high: var(--results-high);
+  --color-results-mid: var(--results-mid);
+  --color-results-low: var(--results-low);
+  --color-results-tint-high: var(--results-tint-high);
+  --color-results-tint-mid: var(--results-tint-mid);
+  --color-results-tint-low: var(--results-tint-low);
+}
+
+/*
+ * Results screen entrance. One pass, on mount, in the order a person reads the
+ * screen: the verdict, then the score it rests on, then the bars, then each card.
+ * Every one is `both`-filled so nothing flashes at its end state first, and the
+ * whole thing is off under prefers-reduced-motion — a kiosk in a busy hall is
+ * exactly where a motion sensitivity is worst to trigger.
+ */
+@keyframes results-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes results-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.84);
+  }
+  62% {
+    opacity: 1;
+    transform: scale(1.035);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes results-bar {
+  0% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes results-tick {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) scaleY(0.2);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) scaleY(1);
+  }
+}
+
+@utility results-rise {
+  animation: results-rise 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@utility results-pop {
+  animation: results-pop 820ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@utility results-bar {
+  transform-origin: left center;
+  animation: results-bar 820ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@utility results-tick {
+  animation: results-tick 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .results-rise,
+  .results-pop,
+  .results-bar,
+  .results-tick {
+    animation: none !important;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

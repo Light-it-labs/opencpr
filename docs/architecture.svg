@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 660" width="1280" height="660" role="img" aria-labelledby="title desc">
+  <title id="title">OpenCPR architecture</title>
+  <desc id="desc">At the booth, a distance sensor in the manikin is read by an Arduino that streams JSON lines over USB to the kiosk PC, where Chrome in kiosk mode scores the run. The kiosk talks over HTTPS to the hosted API, which stores runs in MySQL and queues work in Redis for the email worker that sends the results card through an SMTP provider. Below, the visitor's phone registers on the kiosk's web page, the admin portal reads the API, and the visitor's inbox receives the results card.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M1 1L9 5 1 9z" fill="#B23A2E"/>
+    </marker>
+    <marker id="arrow-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M1 1L9 5 1 9z" fill="#6E5559"/>
+    </marker>
+  </defs>
+  <style>
+    text { font-family: Gabarito, "Avenir Next", "Segoe UI", system-ui, -apple-system, sans-serif; fill: #2A171B; }
+    .title { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; }
+    .subtitle { font-size: 15px; fill: #6E5559; }
+    .lane { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; fill: #9C8689; }
+    .group { fill: #FBF9F4; stroke: #E1DACB; stroke-width: 1.5; }
+    .box { fill: #FFFFFF; stroke: #E1DACB; stroke-width: 1.5; }
+    .box-accent { fill: #2A171B; stroke: none; }
+    .h { font-size: 19px; font-weight: 700; }
+    .h-light { font-size: 19px; font-weight: 700; fill: #FBF9F4; }
+    .p { font-size: 14px; fill: #6E5559; }
+    .p-light { font-size: 14px; fill: #E8D9D6; }
+    .pill { fill: #F7E2DD; }
+    .pill-t { font-size: 12.5px; font-weight: 700; fill: #B23A2E; }
+    .flow { fill: none; stroke: #B23A2E; stroke-width: 2; }
+    .flow-soft { fill: none; stroke: #6E5559; stroke-width: 2; stroke-dasharray: 6 5; }
+    .lbl { font-size: 13px; font-weight: 700; fill: #B23A2E; text-anchor: middle; }
+    .lbl-sub { font-size: 12.5px; fill: #6E5559; text-anchor: middle; }
+    .lbl-soft { font-size: 13px; font-weight: 700; fill: #6E5559; text-anchor: middle; }
+  </style>
+
+  <rect width="1280" height="660" fill="#F3EFE6"/>
+
+  <text x="48" y="58" class="title">How OpenCPR fits together</text>
+  <text x="48" y="84" class="subtitle">Machines in the top row, people in the bottom row. Red arrows carry the run; dashed arrows are how people reach the system.</text>
+  <g transform="translate(1190 36)" aria-hidden="true">
+    <rect x="8.5" y="5" width="14" height="24" rx="7" fill="#C8372D" transform="rotate(-45 15.5 17)"/>
+    <rect x="17.5" y="5" width="14" height="24" rx="7" fill="#F2A79E" transform="rotate(45 24.5 17)"/>
+  </g>
+
+  <!-- Lane: at the booth -->
+  <rect x="48" y="124" width="600" height="246" rx="22" class="group"/>
+  <text x="76" y="156" class="lane">AT THE BOOTH</text>
+
+  <rect x="76" y="176" width="160" height="166" rx="14" class="box"/>
+  <text x="96" y="208" class="h">Manikin</text>
+  <text class="p"><tspan x="96" y="236">Adult CPR manikin.</tspan><tspan x="96" y="264">A time-of-flight</tspan><tspan x="96" y="284">sensor on the</tspan><tspan x="96" y="304">chest plate</tspan><tspan x="96" y="324">measures depth.</tspan></text>
+
+  <path class="flow" d="M236 259 L292 259" marker-end="url(#arrow)"/>
+  <text x="264" y="248" class="lbl-sub">I²C</text>
+
+  <rect x="292" y="176" width="140" height="166" rx="14" class="box"/>
+  <text x="312" y="208" class="h">Arduino</text>
+  <text class="p"><tspan x="312" y="236">Uno R3. Reads the</tspan><tspan x="312" y="256">sensor ~30 times a</tspan><tspan x="312" y="276">second and reports</tspan><tspan x="312" y="296">each compression.</tspan><tspan x="312" y="324">It never scores.</tspan></text>
+
+  <path class="flow" d="M432 259 L508 259" marker-end="url(#arrow)"/>
+  <text x="470" y="236" class="lbl">USB</text>
+  <text x="470" y="251" class="lbl-sub">JSON lines</text>
+
+  <rect x="508" y="176" width="114" height="166" rx="14" class="box-accent"/>
+  <text x="526" y="208" class="h-light">Kiosk PC</text>
+  <text class="p-light"><tspan x="526" y="236">Chrome in</tspan><tspan x="526" y="256">kiosk mode.</tspan><tspan x="526" y="284">Web Serial,</tspan><tspan x="526" y="304">scores the</tspan><tspan x="526" y="324">run.</tspan></text>
+
+  <!-- Booth to hosting -->
+  <path class="flow" d="M622 259 L776 259" marker-end="url(#arrow)"/>
+  <text x="699" y="236" class="lbl">HTTPS</text>
+  <text x="699" y="251" class="lbl-sub">runs, heartbeats</text>
+
+  <!-- Lane: your hosting -->
+  <rect x="752" y="124" width="500" height="246" rx="22" class="group"/>
+  <text x="780" y="156" class="lane">YOUR HOSTING</text>
+
+  <rect x="776" y="176" width="196" height="166" rx="14" class="box"/>
+  <text x="796" y="208" class="h">API</text>
+  <text class="p"><tspan x="796" y="236">Express on Node. Stores</tspan><tspan x="796" y="256">runs and participants,</tspan><tspan x="796" y="276">signs admins in, raises</tspan><tspan x="796" y="296">booth alerts.</tspan></text>
+  <rect x="796" y="310" width="62" height="22" rx="11" class="pill"/>
+  <text x="827" y="325.5" class="pill-t" text-anchor="middle">MySQL</text>
+  <rect x="866" y="310" width="56" height="22" rx="11" class="pill"/>
+  <text x="894" y="325.5" class="pill-t" text-anchor="middle">Redis</text>
+
+  <path class="flow" d="M972 259 L1032 259" marker-end="url(#arrow)"/>
+  <text x="1002" y="243" class="lbl">queue</text>
+
+  <rect x="1032" y="176" width="184" height="166" rx="14" class="box"/>
+  <text x="1052" y="208" class="h">Email worker</text>
+  <text class="p"><tspan x="1052" y="236">Renders the results</tspan><tspan x="1052" y="256">card as an image and</tspan><tspan x="1052" y="276">sends it through an</tspan><tspan x="1052" y="296">SMTP provider.</tspan></text>
+
+  <!-- People row -->
+  <text x="76" y="432" class="lane">PEOPLE</text>
+
+  <rect x="76" y="452" width="356" height="140" rx="14" class="box"/>
+  <text x="96" y="486" class="h">Visitor</text>
+  <text class="p"><tspan x="96" y="514">Does a guided run of 30 compressions and</tspan><tspan x="96" y="534">sees live feedback on the kiosk screen.</tspan><tspan x="96" y="558">No account, no keyboard.</tspan></text>
+
+  <rect x="508" y="452" width="114" height="140" rx="14" class="box"/>
+  <text x="526" y="486" class="h">Phone</text>
+  <text class="p"><tspan x="526" y="514">Scans the QR,</tspan><tspan x="526" y="534">registers on</tspan><tspan x="526" y="554">the kiosk's</tspan><tspan x="526" y="574">web page.</tspan></text>
+
+  <path class="flow-soft" d="M565 452 L565 350" marker-end="url(#arrow-ink)"/>
+
+  <rect x="776" y="452" width="196" height="140" rx="14" class="box"/>
+  <text x="796" y="486" class="h">Admin portal</text>
+  <text class="p"><tspan x="796" y="514">Locations, kiosks,</tspan><tspan x="796" y="534">sessions, participants,</tspan><tspan x="796" y="554">statistics. Passkeys or</tspan><tspan x="796" y="574">magic links.</tspan></text>
+
+  <path class="flow-soft" d="M874 452 L874 350" marker-end="url(#arrow-ink)"/>
+  <text x="894" y="406" class="lbl-soft" text-anchor="start">HTTPS</text>
+
+  <rect x="1032" y="452" width="184" height="140" rx="14" class="box"/>
+  <text x="1052" y="486" class="h">Visitor's inbox</text>
+  <text class="p"><tspan x="1052" y="514">Receives the results</tspan><tspan x="1052" y="534">card: score, depth,</tspan><tspan x="1052" y="554">rate, recoil and</tspan><tspan x="1052" y="574">today's rank.</tspan></text>
+
+  <path class="flow" d="M1124 342 L1124 452" marker-end="url(#arrow)"/>
+  <text x="1138" y="406" class="lbl" text-anchor="start">email</text>
+</svg>

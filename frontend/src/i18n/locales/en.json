@@ -1,0 +1,230 @@
+{
+  "common": {
+    "yes": "Yes",
+    "no": "No",
+    "close": "Close",
+    "filter": "Filter",
+    "requestError": "Unable to complete the request. Please try again later.",
+    "next": "Next",
+    "back": "Back"
+  },
+  "challenge": {
+    "results": {
+      "finish": "Finish",
+      "repeat": "Try again",
+      "scorePercentage": "{value}%",
+      "metrics": {
+        "targetPrefix": "Target: {target}",
+        "depthRange": "{min} to {max} cm",
+        "rateRange": "{min} to {max} per minute",
+        "fullCompressions": {
+          "label": "Full Compressions",
+          "why": "Below {minCm} cm the heart isn't squeezed hard enough and blood doesn't circulate."
+        },
+        "fullRebounds": {
+          "label": "Full Rebounds",
+          "why": "Leaning on the chest stops the heart filling: it pumps less blood and less reaches the brain. It's the most common mistake."
+        },
+        "averageDepth": {
+          "label": "Average Depth",
+          "why": "Under {minCm} cm doesn't move enough blood; over {maxCm} cm raises the risk of fractures."
+        },
+        "averageBpm": {
+          "label": "Average Rate",
+          "why": "Below {min} circulation isn't sustained; above {max} the heart has no time to refill. That's about 2 compressions per second."
+        },
+        "outOf": "/ {total}",
+        "countTarget": "{total} of {total}",
+        "centimeters": "cm",
+        "perMinute": "per minute"
+      },
+      "tips": {
+        "rateSlow": "Compress more often: {min} to {max} per minute, about 2 per second. Below that, blood doesn't reach the brain. Follow the beat of the metronome.",
+        "rateFast": "Ease the pace back to {min}-{max} per minute. Any faster and the heart can't refill between compressions.",
+        "rateUnsteady": "Hold an even {min} to {max} per minute. Speeding up and slowing down interrupts blood flow; consistency is what sustains it.",
+        "depthShallow": "Compress deeper: {minCm} to {maxCm} cm every time. Fall short and the heart doesn't empty. Straight arms, shoulders over your hands, and drop your body weight instead of pushing with your arms.",
+        "depthDeep": "Ease off a little: don't go past {maxCm} cm. Deeper doesn't pump more blood and raises the risk of rib injury.",
+        "depthInconsistent": "Several compressions fell short of {minCm} cm. That usually happens near the end as your arms tire: hold the depth through the last one, and in a real emergency swap rescuers every 2 minutes.",
+        "recoil": "Let the chest come all the way back between compressions. Without lifting your hands, release your weight completely: lean in and the heart won't refill, so the next compression pumps almost nothing."
+      },
+      "score": "Score",
+      "previousScore": "Before: {score}%",
+      "summary": {
+        "targetsMet": "{met} of {total} targets met",
+        "excellent": "Textbook technique across all {total} compressions. In a real emergency, don't stop until help arrives.",
+        "good": "Strong run. Fix the one point flagged below and the technique is textbook.",
+        "fair": "Solid base. Work on the points flagged below and you'll improve fast.",
+        "keepPracticing": "Good first go. Read the points flagged below and try again — technique is learned by repeating it."
+      },
+      "percentSign": "%",
+      "verdicts": {
+        "high": "YOU DID IT!",
+        "mid": "YOU'RE ON THE RIGHT TRACK",
+        "low": "KEEP PRACTICING"
+      },
+      "ranking": {
+        "place": "#{position} of {count} today",
+        "placeOnly": "#{position} today",
+        "percentile": "You're in the top {percentile}% of participants",
+        "outOfToday": "of {count} people today"
+      }
+    },
+    "title": "Keep up with the <bold>pulse</bold> of life",
+    "title_secondary": "GOOD RHYTHM. KEEP IT UP",
+    "title_tertiary": "YOU'RE DOING GREAT. EVERY COMPRESSION COUNTS",
+    "instructions": {
+      "startsIn": "Starts in...",
+      "pageTitle": "Master <bold>CPR</bold> in minutes",
+      "pageSubtitle": "Here's your step-by-step guide to performing <br/><bold>Cardiopulmonary Resuscitation</bold> like a pro.",
+      "challengeStarts": "The CPR challenge is about to begin...",
+      "letsBegin": "Let's begin!",
+      "positioning": {
+        "title": "Hands & Body Placement",
+        "step1": {
+          "title": "Hands at the heart",
+          "description": "Place your hands in the center of the chest, one on top of the other, with your fingers interlaced."
+        },
+        "step2": {
+          "title": "Lock those elbows",
+          "description": "Keep your arms straight and lock your elbows to use your upper body weight."
+        },
+        "step3": {
+          "title": "Use your body weight",
+          "description": "Let your body weight do the work, it's not about arm strength!"
+        }
+      },
+      "technique": {
+        "title": "Compression Technique",
+        "step1": {
+          "title": "Depth",
+          "description": "Press at least 5cm and no more than 6cm per compression."
+        },
+        "step2": {
+          "title": "Rise",
+          "description": "Let the chest fully rise after each compression."
+        },
+        "step3": {
+          "title": "Rhythm",
+          "description": "Maintain a rhythm of 100-120 compressions per minute ~ 2/sec."
+        },
+        "step4": {
+          "title": "Cycle",
+          "description": "30 compressions, then 2 rescue breaths if you are trained."
+        }
+      },
+      "goals": {
+        "title": "Your goals",
+        "compressions": "Complete a total of 30 compressions",
+        "rhythm": "Maintain 100-120 compressions per minute or approximately ~ 2 per second. <br>Follow the beat of the metronome",
+        "depth": "Achieve 5cm depth for each compression (you will hear a 'click')",
+        "recoil": "Allow the chest to fully rise after each compression"
+      },
+      "ready": "Ready to save a life?",
+      "navigation": {
+        "next": "Next",
+        "previous": "Previous",
+        "startChallenge": "Start",
+        "step": "Step {current} of {total}"
+      },
+      "handsOff": "HANDS OFF THE CHEST — calibrating the sensor"
+    },
+    "execution": {
+      "centimeters": "{value} cm",
+      "compressionsLeft": "Compressions Remaining",
+      "of_total": "of {total}",
+      "depthGauge": "Compression Depth",
+      "rhythmGauge": "Rhythm",
+      "countingOnYou": "Your virtual patient is counting on <bold>you</bold>!",
+      "good_rhythm": "GOOD RHYTHM. KEEP IT UP.",
+      "keep_going": "YOU'RE DOING GREAT. EVERY COMPRESSION COUNTS",
+      "recalibrate": "Recalibrate"
+    },
+    "start": "Start",
+    "manualMode": "Manual mode: Press spacebar to simulate a new reading.",
+    "feedback": {
+      "tooSlow": "Too slow!",
+      "tooFast": "Too fast!",
+      "goodRhythm": "Good rhythm!"
+    },
+    "messages": {
+      "connected": "Connected!",
+      "connectionLost": "Connection lost",
+      "noPortRedirect": "Arduino mode requires a serial port. Redirecting to setup...",
+      "noSignal": "No signal from the sensor — check the connection",
+      "recalibrating": "Recalibrating — keep hands off the chest",
+      "recalibrated": "Sensor recalibrated — baseline {mm} mm, compressions reset",
+      "recalibrateFailed": "Recalibration refused — the chest must be at rest",
+      "sensorReady": "Sensor ready",
+      "sensorReadyDetail": "Sensor ready — baseline {mm} mm",
+      "idleWarning": "Still there? Restarting in {seconds}s — touch or compress to continue",
+      "calibrationFailed": "Baseline calibration unstable — is something resting on the chest? Recalibrate before starting."
+    }
+  },
+  "home": {
+    "title": "Are you ready to <bold>save a life</bold> in",
+    "timeChallenge": "1 minute",
+    "startChallenge": "Start Challenge",
+    "30_seconds": "30 SECONDS",
+    "subtitle": "You can help save a life",
+    "start": "Start",
+    "madeBy": "Made by Light-it"
+  },
+  "setup": {
+    "title": "Please select the Kiosk location to get started",
+    "location": {
+      "label": "Location",
+      "placeholder": "Select this kiosk's location",
+      "loading": "Loading locations…"
+    },
+    "selectLocation": "Select a location",
+    "continue": "Connect",
+    "serialPortConnected": "Device connected successfully!",
+    "serialPortError": "Device connection failed. You can continue with manual mode.",
+    "noInitialMessage": "No initial message from device. Continuing...",
+    "mode": {
+      "label": "Challenge Mode",
+      "arduino": "Arduino Device",
+      "manual": "Manual (Spacebar)",
+      "arduinoDescription": "Connect to an Arduino device via serial port. You'll be prompted to select the device.",
+      "manualDescription": "Use the spacebar to simulate compressions manually. Great for testing without hardware."
+    },
+    "messages": {
+      "portRequestError": "Serial port selection cancelled. Arduino mode requires a device connection.",
+      "unsupportedBrowser": "This kiosk needs Chrome or Edge over HTTPS to reach the sensor."
+    }
+  },
+  "register": {
+    "title": "Scan the code with your phone camera",
+    "name": "Name",
+    "namePlaceholder": "Your name",
+    "lastName": "Last name",
+    "lastNamePlaceholder": "Your last name",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "continue": "Continue without registering",
+    "skip": "Skip",
+    "qrHint": "Fill it in on your phone and this screen moves on by itself"
+  },
+  "maintenance": {
+    "title": "Under maintenance",
+    "body": "We're updating the booth. We'll be back in a few minutes.",
+    "handsOff": "Please don't touch the manikin in the meantime"
+  },
+  "claim": {
+    "title": "Learn to save lives",
+    "subtitle": "Leave your details and practice CPR in 30 compressions",
+    "consent": "I authorize [YOUR ORGANIZATION] to process my name and email to manage my participation and send me my results.",
+    "submit": "Done, let's go",
+    "invalid": "Please check your name, last name and email.",
+    "doneTitle": "You're in",
+    "doneBody": "Head back to the big screen — it starts on its own in a few seconds.",
+    "welcomeBackTitle": "Welcome back, {name}!",
+    "welcomeBackBody": "This is run number {attempt}. See if you can beat your best score."
+  },
+  "crash": {
+    "title": "Something went wrong",
+    "kioskBody": "We'll be back at the start in a few seconds.",
+    "phoneBody": "We couldn't show this page. Please try again.",
+    "retry": "Try again"
+  }
+}

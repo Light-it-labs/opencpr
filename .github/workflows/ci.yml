@@ -1,0 +1,123 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    name: frontend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v5
+        with:
+          package_json_file: frontend/package.json
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: frontend/.nvmrc
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm type-check
+      - run: pnpm test
+      - run: pnpm lint --max-warnings 0
+      - run: pnpm format:check
+      - run: pnpm spell-check
+      - run: pnpm build
+
+  admin-portal:
+    name: admin-portal
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: admin-portal
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v5
+        with:
+          package_json_file: admin-portal/package.json
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: admin-portal/.nvmrc
+          cache: pnpm
+          cache-dependency-path: admin-portal/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm type-check
+      - run: pnpm lint --max-warnings 0
+      - run: pnpm format:check
+      - run: pnpm spell-check
+      - run: pnpm build
+
+  backend:
+    name: backend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v5
+        with:
+          package_json_file: backend/package.json
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: backend/.nvmrc
+          cache: pnpm
+          cache-dependency-path: backend/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm type-check
+      - run: pnpm lint --max-warnings 0
+      - run: pnpm format:check
+      - run: pnpm spell-check
+      - run: pnpm build
+
+  backend-migrations:
+    name: backend migrations
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    # drizzle.config.ts loads the full env schema, so every required variable
+    # needs a value even though `generate` never connects to the database.
+    env:
+      APP_ENV: local
+      APP_PORT: 8080
+      MYSQL_HOST: localhost
+      MYSQL_PORT: 3306
+      MYSQL_USER: opencpr
+      MYSQL_PASSWORD: opencpr
+      MYSQL_DATABASE: opencpr
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
+      EMAIL_FROM_ADDRESS: noreply@example.com
+      SMTP_HOST: localhost
+      ADMIN_APP_URL: http://localhost:5174
+      ADMIN_RP_ID: localhost
+      BOOTSTRAP_ADMIN_EMAIL: admin@example.com
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v5
+        with:
+          package_json_file: backend/package.json
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: backend/.nvmrc
+          cache: pnpm
+          cache-dependency-path: backend/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm db:migrate:generate --name ci_check
+      - name: Fail on schema drift
+        run: |
+          if [ -n "$(git status --porcelain src/db/migrations)" ]; then
+            git status --porcelain src/db/migrations
+            echo "::error::The models changed without a migration. Run 'pnpm db:migrate:generate --name <change>' in backend/ and commit the result."
+            exit 1
+          fi

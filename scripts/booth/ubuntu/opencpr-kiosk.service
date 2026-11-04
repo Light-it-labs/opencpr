@@ -1,0 +1,14 @@
+[Unit]
+Description=OpenCPR kiosk (Chrome in kiosk mode)
+PartOf=graphical-session.target
+After=graphical-session.target
+StartLimitIntervalSec=0
+
+[Service]
+ExecStart=__REPO_DIR__/scripts/booth/ubuntu/start-kiosk.sh
+Restart=always
+RestartSec=3
+TimeoutStopSec=5
+
+[Install]
+WantedBy=graphical-session.target

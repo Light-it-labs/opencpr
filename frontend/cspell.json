@@ -1,0 +1,38 @@
+{
+  "ignorePaths": [
+    "cspell.json",
+    "node_modules/",
+    "**/*.css",
+    "**/pnpm-lock.yaml",
+    "dist/",
+    "**/*.svg"
+  ],
+  "words": [
+    "autodocs",
+    "esbuild",
+    "ICONIFY",
+    "iconify",
+    "infobars",
+    "Lngs",
+    "lukemorales",
+    "noerrdialogs",
+    "opencpr",
+    "overscroll",
+    "partialize",
+    "pipefail",
+    "publicforms",
+    "qrcode",
+    "recalibrate",
+    "recalibrated",
+    "recalibrating",
+    "seroval",
+    "sonner",
+    "spacebar",
+    "trackpad",
+    "TTFB",
+    "unstub",
+    "VITE",
+    "wordmark",
+    "xattr"
+  ]
+}

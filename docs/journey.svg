@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 420" width="1240" height="420" role="img" aria-labelledby="title desc">
+  <title id="title">The visitor's journey</title>
+  <desc id="desc">Six steps left to right: the attract screen with a start button on the touchscreen; registering by scanning a QR code with a phone, with a skip button after 20 seconds; instructions on positioning and technique; the run, a 5 second countdown then 30 compressions to a 110 bpm metronome with a live depth bar; results on screen with score, depth, rate, recoil and today's rank; and the results card emailed to the visitor's inbox. Notes: no keyboard, no account; the board measures and the kiosk scores; the results screen returns to the start after 3 minutes idle.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M1 1L9 5 1 9z" fill="#B23A2E"/>
+    </marker>
+    <marker id="arrow-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M1 1L9 5 1 9z" fill="#6E5559"/>
+    </marker>
+  </defs>
+  <style>
+    text { font-family: Gabarito, "Avenir Next", "Segoe UI", system-ui, -apple-system, sans-serif; fill: #2A171B; }
+    .title { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; }
+    .subtitle { font-size: 15px; fill: #6E5559; }
+    .lane { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; fill: #9C8689; }
+    .group { fill: #FBF9F4; stroke: #E1DACB; stroke-width: 1.5; }
+    .box { fill: #FFFFFF; stroke: #E1DACB; stroke-width: 1.5; }
+    .h { font-size: 17px; font-weight: 700; }
+    .p { font-size: 13px; fill: #6E5559; }
+    .pill { fill: #F7E2DD; }
+    .pill-t { font-size: 12.5px; font-weight: 700; fill: #B23A2E; }
+    .flow { fill: none; stroke: #B23A2E; stroke-width: 2; }
+    .leader { fill: none; stroke: #6E5559; stroke-width: 1.5; stroke-dasharray: 4 4; }
+    .note { font-size: 13px; fill: #6E5559; text-anchor: middle; }
+  </style>
+
+  <rect width="1240" height="420" fill="#F3EFE6"/>
+
+  <text x="48" y="58" class="title">What a visitor sees</text>
+  <text x="48" y="84" class="subtitle">One run from the attract screen to the inbox. Nothing needs doing between visitors.</text>
+  <g transform="translate(1150 36)" aria-hidden="true">
+    <rect x="8.5" y="5" width="14" height="24" rx="7" fill="#C8372D" transform="rotate(-45 15.5 17)"/>
+    <rect x="17.5" y="5" width="14" height="24" rx="7" fill="#F2A79E" transform="rotate(45 24.5 17)"/>
+  </g>
+
+  <text x="48" y="112" class="lane">AT THE KIOSK, IN ORDER</text>
+
+  <!-- 1 Attract screen -->
+  <rect x="48" y="124" width="170" height="164" rx="14" class="box"/>
+  <rect x="64" y="140" width="26" height="22" rx="11" class="pill"/>
+  <text x="77" y="155.5" class="pill-t" text-anchor="middle">1</text>
+  <text x="64" y="188" class="h">Attract screen</text>
+  <text class="p"><tspan x="64" y="212">Start button on the</tspan><tspan x="64" y="230">touchscreen.</tspan></text>
+
+  <path class="flow" d="M220 206 L240.8 206" marker-end="url(#arrow)"/>
+
+  <!-- 2 Register -->
+  <rect x="242.8" y="124" width="170" height="164" rx="14" class="box"/>
+  <rect x="258.8" y="140" width="26" height="22" rx="11" class="pill"/>
+  <text x="271.8" y="155.5" class="pill-t" text-anchor="middle">2</text>
+  <text x="258.8" y="188" class="h">Register</text>
+  <text class="p"><tspan x="258.8" y="212">Scan the QR with</tspan><tspan x="258.8" y="230">your phone; a skip</tspan><tspan x="258.8" y="248">button after 20 s.</tspan></text>
+
+  <path class="flow" d="M414.8 206 L435.6 206" marker-end="url(#arrow)"/>
+
+  <!-- 3 Instructions -->
+  <rect x="437.6" y="124" width="170" height="164" rx="14" class="box"/>
+  <rect x="453.6" y="140" width="26" height="22" rx="11" class="pill"/>
+  <text x="466.6" y="155.5" class="pill-t" text-anchor="middle">3</text>
+  <text x="453.6" y="188" class="h">Instructions</text>
+  <text class="p"><tspan x="453.6" y="212">Positioning and</tspan><tspan x="453.6" y="230">technique, step</tspan><tspan x="453.6" y="248">by step.</tspan></text>
+
+  <path class="flow" d="M609.6 206 L630.4 206" marker-end="url(#arrow)"/>
+
+  <!-- 4 The run -->
+  <rect x="632.4" y="124" width="170" height="164" rx="14" class="box"/>
+  <rect x="648.4" y="140" width="26" height="22" rx="11" class="pill"/>
+  <text x="661.4" y="155.5" class="pill-t" text-anchor="middle">4</text>
+  <text x="648.4" y="188" class="h">The run</text>
+  <text class="p"><tspan x="648.4" y="212">5 s countdown, then</tspan><tspan x="648.4" y="230">30 compressions to a</tspan><tspan x="648.4" y="248">110 bpm metronome,</tspan><tspan x="648.4" y="266">live depth bar.</tspan></text>
+
+  <path class="flow" d="M804.4 206 L825.2 206" marker-end="url(#arrow)"/>
+
+  <!-- 5 Results -->
+  <rect x="827.2" y="124" width="170" height="164" rx="14" class="box"/>
+  <rect x="843.2" y="140" width="26" height="22" rx="11" class="pill"/>
+  <text x="856.2" y="155.5" class="pill-t" text-anchor="middle">5</text>
+  <text x="843.2" y="188" class="h">Results</text>
+  <text class="p"><tspan x="843.2" y="212">Score, depth, rate,</tspan><tspan x="843.2" y="230">recoil and today's</tspan><tspan x="843.2" y="248">rank.</tspan></text>
+
+  <path class="flow" d="M999.2 206 L1020 206" marker-end="url(#arrow)"/>
+
+  <!-- 6 Email -->
+  <rect x="1022" y="124" width="170" height="164" rx="14" class="box"/>
+  <rect x="1038" y="140" width="26" height="22" rx="11" class="pill"/>
+  <text x="1051" y="155.5" class="pill-t" text-anchor="middle">6</text>
+  <text x="1038" y="188" class="h">Email</text>
+  <text class="p"><tspan x="1038" y="212">The results card,</tspan><tspan x="1038" y="230">sent to the visitor's</tspan><tspan x="1038" y="248">inbox.</tspan></text>
+
+  <!-- Annotations -->
+  <path class="leader" d="M327.8 288 L327.8 330"/>
+  <text x="327.8" y="350" class="note">no keyboard, no account</text>
+
+  <path class="leader" d="M717.4 288 L717.4 330"/>
+  <text x="717.4" y="350" class="note">the board measures, the kiosk scores</text>
+
+  <path class="leader" d="M912.2 288 L912.2 330"/>
+  <text x="872" y="350" class="note" style="text-anchor:start">results: back to the start after 3 min idle</text>
+</svg>

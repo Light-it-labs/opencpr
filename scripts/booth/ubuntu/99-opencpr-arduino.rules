@@ -1,0 +1,4 @@
+# Arduino boards (USB vendor id 0x2341): writable by the dialout group and left alone by ModemManager,
+# which otherwise probes a freshly plugged board as a modem and holds its port for a while.
+SUBSYSTEM=="usb", ATTRS{idVendor}=="2341", ENV{ID_MM_DEVICE_IGNORE}="1"
+SUBSYSTEM=="tty", ATTRS{idVendor}=="2341", MODE="0660", GROUP="dialout", ENV{ID_MM_DEVICE_IGNORE}="1"

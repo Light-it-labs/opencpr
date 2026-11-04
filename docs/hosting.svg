@@ -1,0 +1,151 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 560" width="1240" height="560" role="img" aria-labelledby="title desc">
+  <title id="title">Hosting OpenCPR on one server</title>
+  <desc id="desc">Path A topology. On the internet, the visitor's phone, the admin's browser and the booth kiosk PC reach a TLS reverse proxy (Caddy or nginx with Let's Encrypt) over HTTPS. The proxy serves three hostnames, kiosk, admin and api under one domain, and forwards each over plain HTTP to a docker compose stack on your server: the kiosk static site on port 5173, the admin portal on 5174 and the Node API on 8080. The API talks to MySQL on 3306 and Redis on 6379; those ports are closed to the internet and only the proxy reaches the services. The API sends email through an SMTP provider. The booth kiosk PC reads the Arduino over USB locally. Admin and api share one registrable domain for the session cookie, and the VITE URLs are baked into the kiosk and admin builds.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M1 1L9 5 1 9z" fill="#B23A2E"/>
+    </marker>
+    <marker id="arrow-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M1 1L9 5 1 9z" fill="#6E5559"/>
+    </marker>
+  </defs>
+  <style>
+    text { font-family: Gabarito, "Avenir Next", "Segoe UI", system-ui, -apple-system, sans-serif; fill: #2A171B; }
+    .title { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; }
+    .subtitle { font-size: 15px; fill: #6E5559; }
+    .lane { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; fill: #9C8689; }
+    .group { fill: #FBF9F4; stroke: #E1DACB; stroke-width: 1.5; }
+    .box { fill: #FFFFFF; stroke: #E1DACB; stroke-width: 1.5; }
+    .box-dashed { fill: #FFFFFF; stroke: #6E5559; stroke-width: 1.5; stroke-dasharray: 6 5; }
+    .h { font-size: 19px; font-weight: 700; }
+    .k { font-size: 16px; font-weight: 700; }
+    .p { font-size: 14px; fill: #6E5559; }
+    .s { font-size: 12.5px; fill: #6E5559; }
+    .pill { fill: #F7E2DD; }
+    .pill-t { font-size: 12.5px; font-weight: 700; fill: #B23A2E; }
+    .flow { fill: none; stroke: #B23A2E; stroke-width: 2; }
+    .flow-soft { fill: none; stroke: #6E5559; stroke-width: 2; stroke-dasharray: 6 5; }
+    .link { fill: none; stroke: #2A171B; stroke-width: 1.5; }
+    .lbl { font-size: 13px; font-weight: 700; fill: #B23A2E; text-anchor: middle; }
+    .lbl-sub { font-size: 12.5px; fill: #6E5559; text-anchor: middle; }
+    .lbl-soft { font-size: 13px; font-weight: 700; fill: #6E5559; text-anchor: middle; }
+  </style>
+
+  <rect width="1240" height="560" fill="#F3EFE6"/>
+
+  <text x="48" y="58" class="title">Hosting OpenCPR on one server (Path A)</text>
+  <text x="48" y="84" class="subtitle">Three public hostnames behind one TLS proxy. Everything behind the proxy speaks plain HTTP on the server itself.</text>
+  <g transform="translate(1150 36)" aria-hidden="true">
+    <rect x="8.5" y="5" width="14" height="24" rx="7" fill="#C8372D" transform="rotate(-45 15.5 17)"/>
+    <rect x="17.5" y="5" width="14" height="24" rx="7" fill="#F2A79E" transform="rotate(45 24.5 17)"/>
+  </g>
+
+  <!-- Internet -->
+  <rect x="48" y="124" width="240" height="352" rx="40" class="group"/>
+  <text x="76" y="156" class="lane">INTERNET</text>
+
+  <rect x="72" y="188" width="192" height="56" rx="14" class="box"/>
+  <text x="92" y="212" class="k">Visitor's phone</text>
+  <text x="92" y="231" class="s">scans the QR, registers</text>
+
+  <rect x="72" y="260" width="192" height="56" rx="14" class="box"/>
+  <text x="92" y="284" class="k">Admin's browser</text>
+  <text x="92" y="303" class="s">passkeys or magic links</text>
+
+  <rect x="72" y="332" width="192" height="56" rx="14" class="box"/>
+  <text x="92" y="356" class="k">Booth kiosk PC</text>
+  <text x="92" y="375" class="s">Chrome in kiosk mode</text>
+
+  <path class="flow-soft" d="M168 388 L168 412" marker-end="url(#arrow-ink)"/>
+  <rect x="72" y="412" width="192" height="46" rx="14" class="box-dashed"/>
+  <text x="92" y="432" class="k" style="font-size:13px">USB: Arduino</text>
+  <text x="92" y="448" class="s">the sensor stays local</text>
+
+  <!-- Clients to proxy -->
+  <path class="flow" d="M264 216 L392 216" marker-end="url(#arrow)"/>
+  <text x="328" y="208" class="lbl">HTTPS</text>
+  <path class="flow" d="M264 288 L392 288" marker-end="url(#arrow)"/>
+  <text x="328" y="280" class="lbl">HTTPS</text>
+  <path class="flow" d="M264 360 L392 360" marker-end="url(#arrow)"/>
+  <text x="328" y="352" class="lbl">HTTPS</text>
+
+  <!-- Proxy -->
+  <rect x="392" y="124" width="250" height="352" rx="14" class="box"/>
+  <text x="412" y="156" class="h">TLS reverse proxy</text>
+  <text x="412" y="178" class="p">Caddy or nginx, Let's Encrypt</text>
+
+  <rect x="412" y="204" width="150" height="24" rx="12" class="pill"/>
+  <text x="487" y="220.5" class="pill-t" text-anchor="middle">kiosk.example.org</text>
+  <text x="570" y="220.5" class="s">→ :5173</text>
+
+  <rect x="412" y="276" width="150" height="24" rx="12" class="pill"/>
+  <text x="487" y="292.5" class="pill-t" text-anchor="middle">admin.example.org</text>
+  <text x="570" y="292.5" class="s">→ :5174</text>
+
+  <rect x="412" y="348" width="150" height="24" rx="12" class="pill"/>
+  <text x="487" y="364.5" class="pill-t" text-anchor="middle">api.example.org</text>
+  <text x="570" y="364.5" class="s">→ :8080</text>
+
+  <text class="s"><tspan x="412" y="414">One domain, three hostnames.</tspan><tspan x="412" y="432">The three service ports stay</tspan><tspan x="412" y="450">closed to the internet.</tspan></text>
+
+  <!-- Proxy to services -->
+  <path class="flow" d="M642 216 L764 216" marker-end="url(#arrow)"/>
+  <text x="703" y="208" class="lbl">HTTP</text>
+  <path class="flow" d="M642 288 L764 288" marker-end="url(#arrow)"/>
+  <text x="703" y="280" class="lbl">HTTP</text>
+  <text x="703" y="308" class="lbl-sub">plain, inside</text>
+  <text x="703" y="324" class="lbl-sub">the server</text>
+  <path class="flow" d="M642 360 L764 360" marker-end="url(#arrow)"/>
+  <text x="703" y="352" class="lbl">HTTP</text>
+
+  <!-- Your server -->
+  <rect x="740" y="124" width="452" height="352" rx="22" class="group"/>
+  <text x="764" y="156" class="lane">YOUR SERVER (DOCKER COMPOSE)</text>
+
+  <rect x="764" y="188" width="196" height="56" rx="14" class="box"/>
+  <text x="784" y="212" class="k">kiosk (nginx)</text>
+  <text x="784" y="231" class="s">static React build</text>
+  <rect x="904" y="197" width="44" height="22" rx="11" class="pill"/>
+  <text x="926" y="212.5" class="pill-t" text-anchor="middle">:5173</text>
+
+  <rect x="764" y="260" width="196" height="56" rx="14" class="box"/>
+  <text x="784" y="284" class="k">admin (nginx)</text>
+  <text x="784" y="303" class="s">static React build</text>
+  <rect x="904" y="269" width="44" height="22" rx="11" class="pill"/>
+  <text x="926" y="284.5" class="pill-t" text-anchor="middle">:5174</text>
+
+  <rect x="764" y="332" width="196" height="56" rx="14" class="box"/>
+  <text x="784" y="356" class="k">api (Node)</text>
+  <text x="784" y="375" class="s">Express, email worker</text>
+  <rect x="904" y="341" width="44" height="22" rx="11" class="pill"/>
+  <text x="926" y="356.5" class="pill-t" text-anchor="middle">:8080</text>
+
+  <!-- api to MySQL and Redis -->
+  <path class="link" d="M826 388 L826 412"/>
+  <path class="link" d="M930 388 L930 400 L966 400 L966 412"/>
+
+  <rect x="764" y="412" width="124" height="44" rx="14" class="box"/>
+  <text x="780" y="439" class="k" style="font-size:15px">MySQL</text>
+  <rect x="836" y="423" width="44" height="22" rx="11" class="pill"/>
+  <text x="858" y="438.5" class="pill-t" text-anchor="middle">:3306</text>
+
+  <rect x="904" y="412" width="124" height="44" rx="14" class="box"/>
+  <text x="920" y="439" class="k" style="font-size:15px">Redis</text>
+  <rect x="976" y="423" width="44" height="22" rx="11" class="pill"/>
+  <text x="998" y="438.5" class="pill-t" text-anchor="middle">:6379</text>
+
+  <!-- Lock note -->
+  <g transform="translate(1050 418)" aria-hidden="true">
+    <rect x="0" y="6" width="12" height="9" rx="2" fill="#6E5559"/>
+    <path d="M2.5 6 V4 a3.5 3.5 0 0 1 7 0 V6" fill="none" stroke="#6E5559" stroke-width="1.5"/>
+  </g>
+  <text class="s"><tspan x="1068" y="428">ports closed to the</tspan><tspan x="1068" y="444">internet; only the</tspan><tspan x="1068" y="460">proxy reaches them</tspan></text>
+
+  <!-- api to SMTP -->
+  <path class="flow-soft" d="M960 360 L1214 360" marker-end="url(#arrow-ink)"/>
+  <text x="1080" y="350" class="lbl-soft">SMTP provider (email)</text>
+
+  <!-- Caption -->
+  <rect x="48" y="500" width="1144" height="40" rx="12" class="box"/>
+  <text x="72" y="525" class="p" style="fill:#2A171B">One registrable domain for admin and api (session cookie); VITE_* URLs are baked into the kiosk and admin builds.</text>
+</svg>

@@ -1,0 +1,10 @@
+node_modules
+*.local
+*.spec.tsx
+*.md
+*.less
+**/pnpm-lock.yaml
+**/routeTree.gen.ts
+**/migrations/**
+# Hand-tuned email HTML; prettier cannot parse its table markup
+public/*.html

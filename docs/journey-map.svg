@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 334" width="1280" height="334" role="img" aria-labelledby="title desc">
+  <title id="title">From nothing to a running booth</title>
+  <desc id="desc">Six steps from left to right, each naming the page that covers it: 1 plan the booth and buy the parts, in getting-started.md; 2 build the sensor, a prototype and then the booth, in hardware.md; 3 host the software, in hosting.md; 4 set up the booth computer, in scripts/booth; 5 the first visitor, in booth-operations.md; 6 keep it running, also in booth-operations.md.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M1 1L9 5 1 9z" fill="#B23A2E"/>
+    </marker>
+  </defs>
+  <style>
+    text { font-family: Gabarito, "Avenir Next", "Segoe UI", system-ui, -apple-system, sans-serif; fill: #2A171B; }
+    .title { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; }
+    .subtitle { font-size: 15px; fill: #6E5559; }
+    .box { fill: #FFFFFF; stroke: #E1DACB; stroke-width: 1.5; }
+    .h { font-size: 19px; font-weight: 700; }
+    .p { font-size: 13px; fill: #6E5559; }
+    .pill { fill: #F7E2DD; }
+    .pill-t { font-size: 12.5px; font-weight: 700; fill: #B23A2E; }
+    .flow { fill: none; stroke: #B23A2E; stroke-width: 2; }
+  </style>
+
+  <rect width="1280" height="334" fill="#F3EFE6"/>
+
+  <text x="48" y="58" class="title">From nothing to a running booth</text>
+  <text x="48" y="84" class="subtitle">Six steps in order. Each card names the page that covers it in full.</text>
+  <g transform="translate(1190 36)" aria-hidden="true">
+    <rect x="8.5" y="5" width="14" height="24" rx="7" fill="#C8372D" transform="rotate(-45 15.5 17)"/>
+    <rect x="17.5" y="5" width="14" height="24" rx="7" fill="#F2A79E" transform="rotate(45 24.5 17)"/>
+  </g>
+
+  <rect x="48.0" y="124" width="166" height="170" rx="14" class="box"/>
+  <rect x="68.0" y="144" width="30" height="22" rx="11" class="pill"/>
+  <text x="83.0" y="159.5" class="pill-t" text-anchor="middle">1</text>
+  <text x="68.0" y="202" class="h">Plan and buy</text>
+  <text x="68.0" y="276" class="p">getting-started.md</text>
+  <path class="flow" d="M218.0 209.0 L247.6 209.0" marker-end="url(#arrow)"/>
+  <rect x="251.6" y="124" width="166" height="170" rx="14" class="box"/>
+  <rect x="271.6" y="144" width="30" height="22" rx="11" class="pill"/>
+  <text x="286.6" y="159.5" class="pill-t" text-anchor="middle">2</text>
+  <text class="h"><tspan x="271.6" y="202">Build the</tspan><tspan x="271.6" y="226">sensor</tspan></text>
+  <text x="271.6" y="250" class="p">prototype, then booth</text>
+  <text x="271.6" y="276" class="p">hardware.md</text>
+  <path class="flow" d="M421.6 209.0 L451.2 209.0" marker-end="url(#arrow)"/>
+  <rect x="455.2" y="124" width="166" height="170" rx="14" class="box"/>
+  <rect x="475.2" y="144" width="30" height="22" rx="11" class="pill"/>
+  <text x="490.2" y="159.5" class="pill-t" text-anchor="middle">3</text>
+  <text class="h"><tspan x="475.2" y="202">Host the</tspan><tspan x="475.2" y="226">software</tspan></text>
+  <text x="475.2" y="276" class="p">hosting.md</text>
+  <path class="flow" d="M625.2 209.0 L654.8 209.0" marker-end="url(#arrow)"/>
+  <rect x="658.8" y="124" width="166" height="170" rx="14" class="box"/>
+  <rect x="678.8" y="144" width="30" height="22" rx="11" class="pill"/>
+  <text x="693.8" y="159.5" class="pill-t" text-anchor="middle">4</text>
+  <text class="h"><tspan x="678.8" y="202">Set up the</tspan><tspan x="678.8" y="226">booth</tspan><tspan x="678.8" y="250">computer</tspan></text>
+  <text x="678.8" y="276" class="p">scripts/booth/</text>
+  <path class="flow" d="M828.8 209.0 L858.4 209.0" marker-end="url(#arrow)"/>
+  <rect x="862.4" y="124" width="166" height="170" rx="14" class="box"/>
+  <rect x="882.4" y="144" width="30" height="22" rx="11" class="pill"/>
+  <text x="897.4" y="159.5" class="pill-t" text-anchor="middle">5</text>
+  <text x="882.4" y="202" class="h">First visitor</text>
+  <text x="882.4" y="276" class="p">booth-operations.md</text>
+  <path class="flow" d="M1032.4 209.0 L1062.0 209.0" marker-end="url(#arrow)"/>
+  <rect x="1066.0" y="124" width="166" height="170" rx="14" class="box"/>
+  <rect x="1086.0" y="144" width="30" height="22" rx="11" class="pill"/>
+  <text x="1101.0" y="159.5" class="pill-t" text-anchor="middle">6</text>
+  <text class="h"><tspan x="1086.0" y="202">Keep it</tspan><tspan x="1086.0" y="226">running</tspan></text>
+  <text x="1086.0" y="276" class="p">booth-operations.md</text>
+</svg>

@@ -1,0 +1,27 @@
+{
+  "ignorePaths": [
+    "cspell.json",
+    "node_modules/",
+    "**/*.css",
+    "**/pnpm-lock.yaml",
+    "dist/",
+    "**/*.svg"
+  ],
+  "words": [
+    "cmdk",
+    "commitlint",
+    "iconify",
+    "ICONIFY",
+    "lukemorales",
+    "nums",
+    "opencpr",
+    "partialize",
+    "seroval",
+    "simplewebauthn",
+    "sonner",
+    "TTFB",
+    "unstub",
+    "VITE",
+    "wordmark"
+  ]
+}

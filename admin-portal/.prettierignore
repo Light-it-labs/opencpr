@@ -1,0 +1,10 @@
+node_modules
+.next
+*.local
+.eslintcache
+*.md
+*.less
+*.css
+!styles.css
+**/pnpm-lock.yaml
+**/routeTree.gen.ts

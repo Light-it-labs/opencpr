@@ -1,0 +1,74 @@
+# Production override for one server behind a TLS reverse proxy. Use it with
+# the base file, every time:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d
+#
+# or set COMPOSE_FILE=docker-compose.yml:docker-compose.prod.yml in .env so a
+# plain `docker compose` picks up both. Compared with the base file it publishes
+# no MySQL, Redis or Mailpit port, drops Mailpit, never seeds, binds the three
+# app ports to 127.0.0.1 for the proxy, and refuses to start without the
+# settings production needs. Every value still comes from the root .env; see
+# docs/hosting.md.
+
+x-backend-env: &backend-env
+  APP_ENV: production
+  SMTP_HOST: ${SMTP_HOST:?set SMTP_HOST in .env to your SMTP provider; production has no Mailpit}
+  SMTP_PORT: ${SMTP_PORT:-587}
+  EMAIL_FROM_ADDRESS: ${EMAIL_FROM_ADDRESS:?set EMAIL_FROM_ADDRESS in .env to an address your SMTP provider lets you send from}
+  ADMIN_APP_URL: ${ADMIN_APP_URL:?set ADMIN_APP_URL in .env to the admin portal's public https origin}
+  ADMIN_RP_ID: ${ADMIN_RP_ID:?set ADMIN_RP_ID in .env to the admin portal's registrable domain}
+  BOOTSTRAP_ADMIN_EMAIL: ${BOOTSTRAP_ADMIN_EMAIL:?set BOOTSTRAP_ADMIN_EMAIL in .env to the first admin's email}
+
+services:
+  mysql:
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD:?set MYSQL_PASSWORD in .env to a long random password}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?set MYSQL_PASSWORD in .env to a long random password}
+    ports: !reset []
+    restart: unless-stopped
+
+  redis:
+    ports: !reset []
+    restart: unless-stopped
+
+  # Not started: profiles keep it out of `up`, and nothing depends on it here.
+  mailpit:
+    profiles: ["mailpit"]
+    ports: !reset []
+
+  migrate:
+    environment: *backend-env
+    # Migrations only. Touching the marker means an accidental start with the
+    # base file alone still skips the seed, which would reset the database.
+    command: sh -c "pnpm db:migrate && touch /seed/done"
+
+  api:
+    environment: *backend-env
+    ports: !override
+      - "127.0.0.1:8080:8080"
+    depends_on: !override
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  kiosk:
+    build:
+      args:
+        VITE_API_URL: ${VITE_API_URL:?set VITE_API_URL in .env to the API's public https URL ending in /api}
+        VITE_PUBLIC_URL: ${VITE_PUBLIC_URL:?set VITE_PUBLIC_URL in .env to the kiosk's public https origin}
+        VITE_APP_ENV: production
+    ports: !override
+      - "127.0.0.1:5173:80"
+    restart: unless-stopped
+
+  admin:
+    build:
+      args:
+        VITE_APP_NAME: ${VITE_APP_NAME:?set VITE_APP_NAME in .env to the admin portal's display name}
+        VITE_API_URL: ${VITE_API_URL:?set VITE_API_URL in .env to the API's public https URL ending in /api}
+        VITE_APP_ENV: production
+    ports: !override
+      - "127.0.0.1:5174:80"
+    restart: unless-stopped

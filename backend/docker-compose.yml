@@ -1,0 +1,56 @@
+name: opencpr
+
+services:
+  # The API runs on the host in development (pnpm dev); uncomment to run it in
+  # Docker instead. The results card is rendered with satori + resvg, so the
+  # image needs no browser.
+  # api:
+  #   build: .
+  #   ports:
+  #     - "8080:8080"
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     - MYSQL_HOST=mysql
+  #     - REDIS_HOST=redis
+  #     - SMTP_HOST=mailpit
+  #   volumes:
+  #     - .:/app
+  #     - /app/node_modules
+  #   command: pnpm dev
+  #   depends_on:
+  #     - mysql
+  #     - redis
+  #     - mailpit
+
+  mysql:
+    image: mysql:8.0
+    env_file:
+      - .env
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+
+    volumes:
+      - db:/var/lib/mysql
+
+  # Catches every email the API sends; read them at http://localhost:8025.
+  mailpit:
+    image: axllent/mailpit:v1.31.6
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis:/data
+
+volumes:
+  db:
+    driver: local
+  redis:
+    driver: local

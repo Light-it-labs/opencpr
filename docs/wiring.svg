@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 420" width="800" height="420" role="img" aria-labelledby="title desc">
+  <title id="title">OpenCPR sensor wiring</title>
+  <desc id="desc">A VL53L4CD breakout on the left wired with four wires to the screw terminals of an Arduino Uno R3 on the right: red VIN to 5V, black GND to GND, white SDA to A4, yellow SCL to A5.</desc>
+  <style>
+    text { font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; fill: #2A171B; }
+    .h { font-size: 22px; font-weight: 700; }
+    .sub { font-size: 13px; fill: #6B5A5E; }
+    .part { font-size: 15px; font-weight: 600; }
+    .pad { font-size: 14px; font-weight: 600; }
+    .wire { font-size: 13px; font-weight: 600; }
+    .note { font-size: 13px; }
+    .box { fill: #FBF9F4; stroke: #E1DACB; stroke-width: 2; }
+  </style>
+  <rect width="800" height="420" fill="#F3EFE6"/>
+
+  <text class="h" x="40" y="44">Sensor wiring</text>
+  <text class="sub" x="40" y="64">VL53L4CD breakout to Arduino Uno R3 with a screw-terminal shield, I²C over four wires</text>
+  <rect x="40" y="74" width="56" height="3" fill="#B23A2E"/>
+
+  <!-- Sensor breakout -->
+  <text class="part" x="60" y="118">VL53L4CD breakout</text>
+  <rect class="box" x="60" y="130" width="170" height="200" rx="10"/>
+  <rect x="84" y="152" width="40" height="40" rx="4" fill="#2A171B"/>
+  <circle cx="96" cy="172" r="5" fill="#B23A2E"/>
+  <circle cx="112" cy="172" r="5" fill="#F3EFE6"/>
+  <text class="sub" x="84" y="212">ToF sensor</text>
+  <text class="sub" x="84" y="228">faces the base</text>
+  <g class="pad" text-anchor="end">
+    <text x="206" y="155">VIN</text>
+    <text x="206" y="195">GND</text>
+    <text x="206" y="235">SDA</text>
+    <text x="206" y="275">SCL</text>
+  </g>
+  <g fill="#F3EFE6" stroke="#2A171B" stroke-width="2">
+    <circle cx="224" cy="150" r="7"/>
+    <circle cx="224" cy="190" r="7"/>
+    <circle cx="224" cy="230" r="7"/>
+    <circle cx="224" cy="270" r="7"/>
+  </g>
+
+  <!-- Arduino -->
+  <text class="part" x="560" y="118">Arduino Uno R3 + screw shield</text>
+  <rect class="box" x="560" y="130" width="190" height="200" rx="10"/>
+  <rect x="700" y="146" width="36" height="22" rx="3" fill="#2A171B"/>
+  <text class="sub" x="700" y="186">USB-B</text>
+  <text class="sub" x="700" y="202">to the booth</text>
+  <text class="sub" x="700" y="218">computer</text>
+  <g fill="#B23A2E" stroke="#2A171B" stroke-width="2">
+    <rect x="556" y="140" width="22" height="20" rx="3"/>
+    <rect x="556" y="180" width="22" height="20" rx="3"/>
+    <rect x="556" y="220" width="22" height="20" rx="3"/>
+    <rect x="556" y="260" width="22" height="20" rx="3"/>
+  </g>
+  <g class="pad">
+    <text x="590" y="155">5V</text>
+    <text x="590" y="195">GND</text>
+    <text x="590" y="235">A4 · SDA</text>
+    <text x="590" y="275">A5 · SCL</text>
+  </g>
+
+  <!-- Wires -->
+  <g stroke-linecap="round" fill="none">
+    <line x1="231" y1="150" x2="556" y2="150" stroke="#C62828" stroke-width="6"/>
+    <line x1="231" y1="190" x2="556" y2="190" stroke="#1B1B1B" stroke-width="6"/>
+    <line x1="231" y1="230" x2="556" y2="230" stroke="#2A171B" stroke-width="8"/>
+    <line x1="231" y1="230" x2="556" y2="230" stroke="#FFFFFF" stroke-width="5"/>
+    <line x1="231" y1="270" x2="556" y2="270" stroke="#E8B923" stroke-width="6"/>
+  </g>
+  <g class="wire" text-anchor="middle">
+    <text x="393" y="141">red · VIN to 5 V</text>
+    <text x="393" y="181">black · GND to GND</text>
+    <text x="393" y="221">white · SDA to A4</text>
+    <text x="393" y="261">yellow · SCL to A5</text>
+  </g>
+
+  <!-- Notes -->
+  <text class="note" x="40" y="372">Cable: four conductors, 26 AWG, 1.5 m or less. Crimp ferrules on the wire ends before the screw terminals.</text>
+  <text class="note" x="40" y="394">Arduino Mega 2560: the same wiring, with SDA on pin 20 and SCL on pin 21 instead of A4 and A5.</text>
+</svg>

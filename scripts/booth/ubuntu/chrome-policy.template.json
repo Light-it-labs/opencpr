@@ -1,0 +1,14 @@
+{
+  "SerialAllowUsbDevicesForUrls": [
+    {
+      "urls": ["__KIOSK_URL__"],
+      "devices": [{ "vendor_id": 9025 }]
+    }
+  ],
+  "DefaultNotificationsSetting": 2,
+  "PasswordManagerEnabled": false,
+  "TranslateEnabled": false,
+  "BrowserSignin": 0,
+  "DefaultBrowserSettingEnabled": false,
+  "MetricsReportingEnabled": false
+}
