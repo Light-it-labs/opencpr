@@ -67,6 +67,6 @@ export default defineConfig(({ mode }) => {
       // omits the comment linking them, so they are not exposed to the browser.
       sourcemap: "hidden",
     },
-    resolve: { alias: { "@": path.resolve(__dirname, "./src") } },
+    resolve: { alias: { "@": path.resolve(import.meta.dirname, "./src") } },
   };
 });
