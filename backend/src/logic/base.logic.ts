@@ -56,7 +56,7 @@ const checkDbHealth = async (): Promise<EntityHealth> => {
 const checkRedisHealth = async (): Promise<EntityHealth> => {
   try {
     await withTimeout(
-      emailQueue.client.then((client) => client.info()),
+      emailQueue.getBackend().client.then((client) => client.info()),
       REDIS_PROBE_TIMEOUT_MS,
     );
     return { connected: true };
