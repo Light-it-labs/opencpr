@@ -2,9 +2,8 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
-import { ZodError } from "zod";
 
-import { logger, StatusCodes } from "@/config";
+import { logger } from "@/config";
 import { BaseController } from "@/controllers";
 import {
   errorHandler,
@@ -14,7 +13,6 @@ import {
 } from "@/middlewares";
 
 import { env } from "./config";
-import { isSentryEnabled, Sentry } from "./config/sentry";
 import { registerJobsShutdown } from "./jobs";
 import ApiRouter from "./routes/routes";
 
@@ -52,17 +50,6 @@ app.use(httpLogger);
 app.use(kioskRateLimit);
 app.use(generalRateLimit);
 app.use("/api", ApiRouter);
-
-// Sentry counts an error without an HTTP status as a 500. A ZodError has none,
-// but the error handler answers it with a 400, so it is the caller's mistake.
-if (isSentryEnabled) {
-  Sentry.setupExpressErrorHandler(app, {
-    shouldHandleError: (error) =>
-      !(error instanceof ZodError) &&
-      Number(error.status ?? error.statusCode ?? StatusCodes.SERVER_ERROR) >=
-        StatusCodes.SERVER_ERROR,
-  });
-}
 
 app.use(errorHandler);
 

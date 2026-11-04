@@ -1,4 +1,7 @@
 import * as Sentry from "@sentry/node";
+import { ZodError } from "zod";
+
+import { StatusCodes } from "./status-codes";
 
 /**
  * Must be initialized before the modules it instruments are imported, which is
@@ -9,6 +12,8 @@ import * as Sentry from "@sentry/node";
 const dsn = process.env.SENTRY_DSN;
 
 export const isSentryEnabled = Boolean(dsn);
+
+const SENSITIVE_KEY_PARTS = ["forwarded", "-ip", "remote-", "via", "-user"];
 
 export const initializeSentry = () => {
   if (!isSentryEnabled) {
@@ -24,11 +29,36 @@ export const initializeSentry = () => {
     release: process.env.SENTRY_RELEASE,
     // The admin portal hit Sentry's rate limit (429) at full sampling.
     tracesSampleRate: 0.2,
-    sendDefaultPii: false,
-    // Request bodies carry participants' registration details and sign-in
-    // emails, so none of them are attached to events.
+    // Leaving this unset would collect user details, cookies, bodies and query
+    // data. Request bodies carry participants' registration details and
+    // sign-in emails, and cookies carry the admin session, so none of them are
+    // attached to events.
+    dataCollection: {
+      userInfo: false,
+      cookies: false,
+      httpHeaders: {
+        request: { deny: SENSITIVE_KEY_PARTS },
+        response: { deny: SENSITIVE_KEY_PARTS },
+      },
+      httpBodies: [],
+      urlQueryParams: { deny: SENSITIVE_KEY_PARTS },
+      genAI: { inputs: false, outputs: false },
+      databaseQueryData: false,
+      queues: false,
+      graphQL: { document: false, variables: false },
+    },
     integrations: [
-      Sentry.httpIntegration({ maxIncomingRequestBodySize: "none" }),
+      Sentry.httpIntegration({ maxRequestBodySize: "none" }),
+      // Sentry counts an error without an HTTP status as a 500. A ZodError has
+      // none, but the error handler answers it with a 400, so it is the
+      // caller's mistake.
+      Sentry.expressIntegration({
+        shouldHandleError: (error) =>
+          !(error instanceof ZodError) &&
+          Number(
+            error.status ?? error.statusCode ?? StatusCodes.SERVER_ERROR,
+          ) >= StatusCodes.SERVER_ERROR,
+      }),
     ],
   });
 };

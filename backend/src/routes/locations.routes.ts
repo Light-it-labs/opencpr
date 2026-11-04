@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { LocationsController } from "src/controllers/locations.controller";
 
+import { LocationsController } from "@/controllers";
 import { tryCatchWrapper } from "@/middlewares";
 
 export const LocationsRouter = Router();
