@@ -8,8 +8,13 @@ updates:
       prefix: chore(deps)
       prefix-development: chore(deps-dev)
     groups:
-      minor-and-patch:
-        update-types: ["minor", "patch"]
+      all:
+        applies-to: version-updates
+        patterns: ["*"]
+        update-types: ["major", "minor", "patch"]
+      security:
+        applies-to: security-updates
+        patterns: ["*"]
     ignore:
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
@@ -21,8 +26,13 @@ updates:
       prefix: chore(deps)
       prefix-development: chore(deps-dev)
     groups:
-      minor-and-patch:
-        update-types: ["minor", "patch"]
+      all:
+        applies-to: version-updates
+        patterns: ["*"]
+        update-types: ["major", "minor", "patch"]
+      security:
+        applies-to: security-updates
+        patterns: ["*"]
     ignore:
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
@@ -34,8 +44,13 @@ updates:
       prefix: chore(deps)
       prefix-development: chore(deps-dev)
     groups:
-      minor-and-patch:
-        update-types: ["minor", "patch"]
+      all:
+        applies-to: version-updates
+        patterns: ["*"]
+        update-types: ["major", "minor", "patch"]
+      security:
+        applies-to: security-updates
+        patterns: ["*"]
     ignore:
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
@@ -46,5 +61,10 @@ updates:
     commit-message:
       prefix: ci
     groups:
-      minor-and-patch:
-        update-types: ["minor", "patch"]
+      all:
+        applies-to: version-updates
+        patterns: ["*"]
+        update-types: ["major", "minor", "patch"]
+      security:
+        applies-to: security-updates
+        patterns: ["*"]
