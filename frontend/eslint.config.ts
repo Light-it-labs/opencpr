@@ -13,13 +13,14 @@ import sortDestructureKeys from "eslint-plugin-sort-destructure-keys";
 import unicorn from "eslint-plugin-unicorn";
 import unusedImports from "eslint-plugin-unused-imports";
 import globals from "globals";
+import { version as reactVersion } from "react";
 import ts from "typescript-eslint";
 
 const config: Linter.Config[] = [
   // Build output. dist is committed so the deploy server does not have to
   // build, which would otherwise hand the linter a minified bundle.
   { ignores: ["dist/**"] },
-  { settings: { react: { version: "detect" } } },
+  { settings: { react: { version: reactVersion } } },
   { files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"] },
   { languageOptions: { globals: globals.browser } },
 
@@ -127,7 +128,7 @@ const config: Linter.Config[] = [
         },
       ],
       "sort-destructure-keys/sort-destructure-keys": "warn",
-      "unicorn/filename-case": ["error", { case: "kebabCase" }],
+      "unicorn/filename-case": ["error", { case: "kebabCase", checkDirectories: false }],
       "unused-imports/no-unused-imports": "warn",
       "unused-imports/no-unused-vars": [
         "warn",
