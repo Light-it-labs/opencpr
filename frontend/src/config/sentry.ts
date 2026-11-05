@@ -28,7 +28,6 @@ export const initializeSentry = () => {
   Sentry.init({
     dsn: env.VITE_SENTRY_DSN,
     environment: env.VITE_APP_ENV,
-    enableLogs: true,
     integrations: [
       Sentry.tanstackRouterBrowserTracingIntegration(router),
       Sentry.browserTracingIntegration(),
@@ -47,6 +46,13 @@ export const initializeSentry = () => {
     // that broke, so sample errors fully and ordinary sessions sparsely.
     replaysSessionSampleRate: 0.1,
     replaysOnErrorSampleRate: 1.0,
+    dataCollection: {
+      userInfo: false,
+      cookies: false,
+      httpHeaders: false,
+      httpBodies: [],
+      urlQueryParams: false,
+    },
     beforeSend: (event) => {
       return isExpectedNetworkNoise(event) ? null : event;
     },

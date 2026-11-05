@@ -1,5 +1,5 @@
 import js from "@eslint/js";
-import stylisticJs from "@stylistic/eslint-plugin-js";
+import stylistic from "@stylistic/eslint-plugin";
 import eslintConfigPrettier from "eslint-config-prettier";
 import preferArrowFunctions from "eslint-plugin-prefer-arrow-functions";
 import sortDestructureKeys from "eslint-plugin-sort-destructure-keys";
@@ -39,16 +39,16 @@ export default defineConfig([
   // Custom plugins rules
   {
     plugins: {
-      "@stylistic/js": stylisticJs,
+      "@stylistic": stylistic,
       "prefer-arrow-functions": preferArrowFunctions,
       "sort-destructure-keys": sortDestructureKeys,
       "unused-imports": unusedImports,
     },
     rules: {
-      "@stylistic/js/no-multi-spaces": "warn",
-      "@stylistic/js/no-multiple-empty-lines": ["warn", { max: 1 }],
-      "@stylistic/js/no-trailing-spaces": "warn",
-      "@stylistic/js/object-curly-spacing": ["warn", "always"],
+      "@stylistic/no-multi-spaces": "warn",
+      "@stylistic/no-multiple-empty-lines": ["warn", { max: 1 }],
+      "@stylistic/no-trailing-spaces": "warn",
+      "@stylistic/object-curly-spacing": ["warn", "always"],
       "prefer-arrow-functions/prefer-arrow-functions": "error",
       "sort-destructure-keys/sort-destructure-keys": "warn",
       "unused-imports/no-unused-imports": "warn",

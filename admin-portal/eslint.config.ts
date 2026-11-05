@@ -6,6 +6,7 @@ import { defineConfig } from "eslint/config";
 import betterTailwindcss from "eslint-plugin-better-tailwindcss";
 import preferArrowFunctions from "eslint-plugin-prefer-arrow-functions";
 import react from "eslint-plugin-react";
+import { version as reactVersion } from "react";
 import reactHooks from "eslint-plugin-react-hooks";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 // @ts-expect-error -- No types available
@@ -16,7 +17,7 @@ import ts from "typescript-eslint";
 import { parser } from "typescript-eslint";
 
 export default defineConfig([
-  { settings: { react: { version: "detect" } } },
+  { settings: { react: { version: reactVersion } } },
   { files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"] },
   { languageOptions: { globals: globals.browser } },
 
@@ -128,6 +129,14 @@ export default defineConfig([
       ],
       "sort-destructure-keys/sort-destructure-keys": "warn",
       "unicorn/filename-case": ["error", { case: "kebabCase" }],
+    },
+  },
+
+  // TanStack Router excludes `-`-prefixed route folders from the route tree; keep checking their file names.
+  {
+    files: ["src/routes/**/-*/**"],
+    rules: {
+      "unicorn/filename-case": ["error", { case: "kebabCase", checkDirectories: false }],
     },
   },
 

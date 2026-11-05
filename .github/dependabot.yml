@@ -18,6 +18,9 @@ updates:
     ignore:
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
+      # typescript-eslint supports TypeScript < 6.1 and TypeScript 7 ships no compiler API yet.
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: npm
     directory: /backend
     schedule:
@@ -36,6 +39,12 @@ updates:
     ignore:
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
+      # typescript-eslint supports TypeScript < 6.1 and TypeScript 7 ships no compiler API yet.
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+      # BullMQ 6 is built against ioredis 5; ioredis 6 switches to RESP3 by default.
+      - dependency-name: "ioredis"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: npm
     directory: /admin-portal
     schedule:
@@ -53,6 +62,9 @@ updates:
         patterns: ["*"]
     ignore:
       - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+      # typescript-eslint supports TypeScript < 6.1 and TypeScript 7 ships no compiler API yet.
+      - dependency-name: "typescript"
         update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: /
