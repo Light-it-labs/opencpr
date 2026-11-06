@@ -149,7 +149,7 @@ Both paths need the location created in the admin portal before the first booth 
 
 ## Your organization's text
 
-The registration form on the visitor's phone asks for consent before anyone can register. Its text is `claim.consent` in `frontend/src/i18n/locales/en.json`: replace `[YOUR ORGANIZATION]` with the organization that holds the data, and make the sentence match your privacy policy. There is no setting for it; it is part of the kiosk build.
+The registration form on the visitor's phone asks for consent before anyone can register. Its text is `claim.consent` in `frontend/src/i18n/locales/en.json` and `es.json`: in both, replace `[YOUR ORGANIZATION]` with the organization that holds the data, and make the sentence match your privacy policy. There is no setting for it; it is part of the kiosk build.
 
 The kiosk also has a `/terms` page (`frontend/src/routes/(public)/terms.page.tsx`) that is only a placeholder and no screen links to it. Replace it with your organization's own terms before you point anyone at it, or leave it unlinked.
 
@@ -157,7 +157,7 @@ Because both are source edits, keep them on a branch of your own (or in a fork) 
 
 ```sh
 git switch -c our-booth
-# edit en.json (and the terms page), then
+# edit en.json and es.json (and the terms page), then
 git commit -am "chore: our consent text"
 ```
 
@@ -169,7 +169,7 @@ git merge origin/main
 docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d
 ```
 
-A conflict in `en.json` means the release changed a string next to yours; keep your consent text and take the rest.
+A conflict in `en.json` or `es.json` means the release changed a string next to yours; keep your consent text and take the rest.
 
 ## Backups
 

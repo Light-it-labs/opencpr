@@ -176,6 +176,11 @@
       "placeholder": "Select this kiosk's location",
       "loading": "Loading locations…"
     },
+    "language": {
+      "label": "Language",
+      "en": "English",
+      "es": "Español"
+    },
     "selectLocation": "Select a location",
     "continue": "Connect",
     "serialPortConnected": "Device connected successfully!",

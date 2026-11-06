@@ -37,7 +37,7 @@ No. OpenCPR is a training tool. It measures compressions on a manikin, never on 
 
 ### Which languages does the kiosk support, and can I translate it?
 
-English only. The kiosk's texts are in `frontend/src/i18n/locales/en.json` and the locale is fixed in `frontend/src/i18n/index.tsx`; there is no language switcher. To translate, add a locale file next to `en.json`, register it in `frontend/src/i18n/`, and change the fixed locale. The admin portal has no translation layer, and the email texts live in the backend.
+English and Spanish. Each kiosk picks its language on its setup screen and keeps it per browser; a visitor's phone follows the phone's own language and falls back to English. The texts are in `frontend/src/i18n/locales/en.json` and `es.json`. To add a language, add a locale file with the same keys next to them, register it in `frontend/src/i18n/`, and add a `setup.language` label for it in every locale. The admin portal has no translation layer, and the email texts live in the backend.
 
 ### Can I change the texts, colors or logo?
 

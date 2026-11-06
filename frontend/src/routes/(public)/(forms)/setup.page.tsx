@@ -6,8 +6,17 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 import { Button, Label, RadioGroup, Select } from "@/components/ui";
+import { DEFAULT_LANGUAGE, LANGUAGES } from "@/i18n";
 import { useLocations } from "@/services/locations";
-import { CHALLENGE_MODES, setLocationId, setMode, setSerialPort, useLocationId } from "@/stores";
+import {
+  CHALLENGE_MODES,
+  setLanguage,
+  setLocationId,
+  setMode,
+  setSerialPort,
+  useLanguage,
+  useLocationId,
+} from "@/stores";
 import { getAuthorizedPort, isSerialSupported, requestSerialPort } from "@/utils";
 
 export const setupFormSchema = z.object({
@@ -17,15 +26,17 @@ export const setupFormSchema = z.object({
   // Which venue this machine is standing in. Stored per browser rather than
   // baked into the build, so one deployment serves every event.
   locationId: z.string().min(1, { message: "Please select a location" }),
+  language: z.enum([LANGUAGES.EN, LANGUAGES.ES]),
 });
 
 export type SetupFormData = z.infer<typeof setupFormSchema>;
 
 const RouteComponent = () => {
-  const { t } = useTranslation();
+  const { i18n, t } = useTranslation();
   const navigate = useNavigate();
 
   const savedLocationId = useLocationId();
+  const savedLanguage = useLanguage();
   const { data: locations, isPending: isLoadingLocations } = useLocations();
 
   const {
@@ -38,6 +49,7 @@ const RouteComponent = () => {
     defaultValues: {
       mode: CHALLENGE_MODES.ARDUINO,
       locationId: savedLocationId ?? "",
+      language: savedLanguage ?? DEFAULT_LANGUAGE,
     },
   });
 
@@ -46,6 +58,7 @@ const RouteComponent = () => {
   const onSubmit = async (data: SetupFormData) => {
     setMode(data.mode);
     setLocationId(data.locationId);
+    setLanguage(data.language);
 
     // Request serial port access only if Arduino mode is selected
     if (data.mode === CHALLENGE_MODES.ARDUINO) {
@@ -76,6 +89,35 @@ const RouteComponent = () => {
       onSubmit={handleSubmit(onSubmit)}
     >
       <div className="flex flex-col gap-4">
+        <Label aria-required>{t("setup.language.label")}</Label>
+
+        <Controller
+          control={control}
+          name="language"
+          render={({ field }) => {
+            return (
+              <RadioGroup.Root
+                onValueChange={(language) => {
+                  field.onChange(language);
+                  void i18n.changeLanguage(language);
+                }}
+                value={field.value}
+              >
+                {Object.values(LANGUAGES).map((language) => {
+                  return (
+                    <div className="flex items-center space-x-2" key={language}>
+                      <RadioGroup.Item id={`language-${language}`} value={language} />
+                      <Label className="font-normal" htmlFor={`language-${language}`}>
+                        {t(`setup.language.${language}`)}
+                      </Label>
+                    </div>
+                  );
+                })}
+              </RadioGroup.Root>
+            );
+          }}
+        />
+
         <Label aria-required>{t("setup.location.label")}</Label>
 
         <Controller
