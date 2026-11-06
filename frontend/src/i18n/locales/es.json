@@ -174,7 +174,8 @@
     "location": {
       "label": "Ubicación",
       "placeholder": "Elegí la ubicación de este kiosco",
-      "loading": "Cargando ubicaciones…"
+      "loading": "Cargando ubicaciones…",
+      "required": "Elegí una ubicación"
     },
     "language": {
       "label": "Idioma",
@@ -188,6 +189,7 @@
     "noInitialMessage": "Sin mensaje inicial del dispositivo. Continuando...",
     "mode": {
       "label": "Modo del desafío",
+      "required": "Elegí un modo",
       "arduino": "Dispositivo Arduino",
       "manual": "Manual (barra espaciadora)",
       "arduinoDescription": "Conectarse a un dispositivo Arduino por puerto serial. Se te va a pedir que elijas el dispositivo.",

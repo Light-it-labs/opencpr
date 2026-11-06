@@ -20,12 +20,10 @@ import {
 import { getAuthorizedPort, isSerialSupported, requestSerialPort } from "@/utils";
 
 export const setupFormSchema = z.object({
-  mode: z.enum([CHALLENGE_MODES.ARDUINO, CHALLENGE_MODES.MANUAL], {
-    message: "Please select a mode",
-  }),
+  mode: z.enum([CHALLENGE_MODES.ARDUINO, CHALLENGE_MODES.MANUAL]),
   // Which venue this machine is standing in. Stored per browser rather than
   // baked into the build, so one deployment serves every event.
-  locationId: z.string().min(1, { message: "Please select a location" }),
+  locationId: z.string().min(1),
   language: z.enum([LANGUAGES.EN, LANGUAGES.ES]),
 });
 
@@ -158,7 +156,7 @@ const RouteComponent = () => {
         />
 
         {errors.locationId ? (
-          <p className="text-sm text-destructive">{errors.locationId.message}</p>
+          <p className="text-sm text-destructive">{t("setup.location.required")}</p>
         ) : null}
 
         <Label aria-required>{t("setup.mode.label")}</Label>
@@ -186,7 +184,9 @@ const RouteComponent = () => {
           }}
         />
 
-        {errors.mode ? <p className="text-sm text-destructive">{errors.mode.message}</p> : null}
+        {errors.mode ? (
+          <p className="text-sm text-destructive">{t("setup.mode.required")}</p>
+        ) : null}
 
         {selectedMode === "arduino" ? (
           <p className="text-sm text-muted-foreground">{t("setup.mode.arduinoDescription")}</p>

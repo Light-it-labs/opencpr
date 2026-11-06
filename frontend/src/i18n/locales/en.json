@@ -174,7 +174,8 @@
     "location": {
       "label": "Location",
       "placeholder": "Select this kiosk's location",
-      "loading": "Loading locations…"
+      "loading": "Loading locations…",
+      "required": "Please select a location"
     },
     "language": {
       "label": "Language",
@@ -188,6 +189,7 @@
     "noInitialMessage": "No initial message from device. Continuing...",
     "mode": {
       "label": "Challenge Mode",
+      "required": "Please select a mode",
       "arduino": "Arduino Device",
       "manual": "Manual (Spacebar)",
       "arduinoDescription": "Connect to an Arduino device via serial port. You'll be prompted to select the device.",
