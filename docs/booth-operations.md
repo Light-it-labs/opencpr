@@ -17,7 +17,7 @@ What to do before the first day, what visitors see, what the booth does on its o
 
 **Set up the booth computer.** Follow the [booth computer guide](../scripts/booth/README.md) for your platform. Its installer puts in place the Chrome serial policy and, on Ubuntu, the udev rule, so a board replaced or plugged back in during the day reconnects on its own.
 
-**First run, with a keyboard.** After the reboot the computer logs in and the kiosk opens on `/setup`. Pick the location and Arduino mode, and grant the serial port if Chrome asks (with the policy in place it does not). The grant lives in the kiosk's Chrome profile. Wait for the home screen, check that the booth appears under Kiosks in the admin portal with status `reading`, do one run yourself to the clicker, and then remove the keyboard. Calibrate the sensor for your manikin first if you have not: see [Build the sensor](hardware.md#calibrating-for-your-manikin).
+**First run, with a keyboard.** After the reboot the computer logs in and the kiosk opens on `/setup`. Pick the language, the location and Arduino mode, and grant the serial port if Chrome asks (with the policy in place it does not). The grant lives in the kiosk's Chrome profile. Wait for the home screen, check that the booth appears under Kiosks in the admin portal with status `reading`, do one run yourself to the clicker, and then remove the keyboard. Calibrate the sensor for your manikin first if you have not: see [Build the sensor](hardware.md#calibrating-for-your-manikin).
 
 ## Daily operation
 

@@ -1,6 +1,7 @@
 {
   "ignorePaths": [
     "cspell.json",
+    "src/i18n/locales/es.json",
     "node_modules/",
     "**/*.css",
     "**/pnpm-lock.yaml",
@@ -10,6 +11,7 @@
   "words": [
     "autodocs",
     "esbuild",
+    "Español",
     "ICONIFY",
     "iconify",
     "infobars",
