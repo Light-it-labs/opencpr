@@ -212,8 +212,7 @@ export const emailWorker = new Worker<EmailJobData, undefined>(
 
 /**
  * Only the last attempt is reported, and only by ids: the job data holds
- * names and email addresses, which must not reach Sentry. An SMTP error can
- * echo the recipient's address too, so it is reported redacted.
+ * names and email addresses, which must not reach Sentry.
  */
 emailWorker.on("failed", (job, error) => {
   if (!job || job.attemptsMade < (job.opts.attempts ?? 1)) {

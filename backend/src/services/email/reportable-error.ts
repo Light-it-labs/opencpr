@@ -23,11 +23,7 @@ const readNumber = (error: unknown, key: string) => {
   return typeof value === "number" ? value : undefined;
 };
 
-/**
- * Nodemailer puts the server's reply in the message and in `response`, and a
- * rejection quotes the recipient's address. Only the redacted message and the
- * codes are kept: enough to tell a bounce from an outage.
- */
+// Nodemailer quotes the recipient's address in the message and in `response`.
 export const toReportableEmailError = (error: unknown) => {
   const source = error instanceof Error ? error : new Error(String(error));
   const reportable = new Error(redactText(source.message));

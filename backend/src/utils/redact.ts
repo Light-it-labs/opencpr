@@ -1,16 +1,10 @@
 const SQL_PREVIEW_LENGTH = 500;
 
-/**
- * Drizzle wraps driver errors as `Failed query: <sql>\nparams: <values>`, and
- * the values are session ids, emails and search terms. The stack repeats the
- * message, so the cut stops at the first stack frame. The escaped form covers
- * text that was already serialized to JSON.
- */
+// Drizzle errors end in `params: <values>` and the stack repeats them, so the cut stops at the first frame.
 const QUERY_PARAMS = /(?:\n|\\n)params:[\s\S]*?(?=(?:\n|\\n)\s+at |$)/;
 
 const EMAIL = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g;
 
-/** A claim link's id lets anyone holding it file runs under that registration. */
 const CPR_SESSION_ID_SEGMENT = /(\/cpr-sessions\/)(?!:)[^/?#\s]+/g;
 
 const truncate = (text: string) =>
@@ -31,10 +25,7 @@ const removeQueryParams = (text: string) => {
 export const redactText = (text: string) =>
   removeQueryParams(text).replace(EMAIL, "[email]");
 
-/**
- * Only a query string right after a path is dropped, so SQL placeholders in a
- * span name ("where id = ?") survive.
- */
+// Needs a path before the "?" so SQL placeholders in span names ("where id = ?") survive.
 const PATH_QUERY = /(\/[^\s?#]*)[?#]\S*/g;
 
 export const redactUrl = (url: string) =>

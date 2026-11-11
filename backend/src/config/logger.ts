@@ -19,10 +19,7 @@ export const getColor = (infoLevel: string): string => {
   }
 };
 
-/**
- * Every string is redacted, not only errors: call sites often log
- * `error.message`, which carries the query values of a failed query.
- */
+// Every string, not only errors: call sites log `error.message`, which carries query values.
 const redactValues = (_key: string, value: unknown) => {
   if (value instanceof Error)
     return { name: value.name, message: value.message, stack: value.stack };

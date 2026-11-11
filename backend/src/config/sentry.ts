@@ -42,18 +42,14 @@ export const initializeSentry = () => {
         response: { deny: SENSITIVE_KEY_PARTS },
       },
       httpBodies: [],
-      // Admin searches carry names and emails, and no backend query param is
-      // needed to debug a failure.
+      // Admin search params carry names and emails.
       urlQueryParams: false,
       genAI: { inputs: false, outputs: false },
       databaseQueryData: false,
       queues: false,
       graphQL: { document: false, variables: false },
     },
-    // Drizzle puts query values (session ids, emails, search terms) in its
-    // error messages, and claim links put a registration id in the URL.
-    // beforeSendSpan rather than beforeSendTransaction: SDK 11 streams spans
-    // by default and skips the latter.
+    // beforeSendSpan, not beforeSendTransaction: SDK 11 streams spans and skips the latter.
     beforeSend: scrubEvent,
     beforeSendSpan: scrubSpan,
     beforeBreadcrumb: scrubBreadcrumb,
