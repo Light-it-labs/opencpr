@@ -44,7 +44,8 @@ app.use(
 app.use(helmet());
 
 app.use(cookieParser());
-app.use(express.json());
+// A full run is about 2 kB, so the 100 kB default is needless room for abuse.
+app.use(express.json({ limit: "16kb" }));
 
 app.use(httpLogger);
 app.use(kioskRateLimit);

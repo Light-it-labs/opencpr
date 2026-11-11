@@ -10,6 +10,12 @@ All notable changes to OpenCPR are listed here. The format follows [Keep a Chang
 
 - Spanish translation of the kiosk and the phone registration form. Each kiosk picks its language on the setup screen and keeps it per browser; a visitor's phone follows the phone's language and falls back to English.
 
+### Security
+
+- Saving a run now ignores any field the server owns (row id, timestamps, scores), caps a run at 60 compressions with bounded timing and depth values, and limits API request bodies to 16 kB.
+- Failed database queries no longer send their values (admin session ids, emails, search terms) to Sentry or the API logs, and the API no longer records query strings.
+- The admin performance statistics group a person's runs in linear time, so a flood of runs under one registration can no longer stall the API when someone opens them.
+
 ## [1.0.1] - 2026-11-05
 
 ### Security
