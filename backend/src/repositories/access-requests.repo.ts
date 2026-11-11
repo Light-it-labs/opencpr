@@ -1,5 +1,5 @@
 import { subDays } from "date-fns";
-import { and, desc, eq, lt, sql } from "drizzle-orm";
+import { and, count, desc, eq, gte, lt, sql } from "drizzle-orm";
 
 import {
   ACCESS_REQUEST_STATUSES,
@@ -68,6 +68,15 @@ export const AccessRequestsRepository = {
           !previous || previous.status === ACCESS_REQUEST_STATUSES.approved,
       };
     }),
+
+  countCreatedSince: async (since: Date) => {
+    const [row] = await db
+      .select({ total: count() })
+      .from(accessRequests)
+      .where(gte(accessRequests.createdAt, since));
+
+    return row?.total ?? 0;
+  },
 
   listPending: async () =>
     await db
