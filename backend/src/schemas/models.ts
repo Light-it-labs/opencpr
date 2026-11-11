@@ -1,40 +1,37 @@
 import { InferSelectModel } from "drizzle-orm";
-import { createInsertSchema } from "drizzle-zod";
 import z from "zod";
 
 import { cprSessions, participants } from "@/models";
+
+/** The challenge asks for 30; twice that leaves room without letting a request grow unbounded. */
+const MAX_COMPRESSIONS_PER_RUN = 60;
+const MAX_RUN_DURATION_MS = 10 * 60_000;
+const MAX_DEPTH_MM = 200;
 
 // The device reports measurements only. Rate, full compression and full recoil
 // are derived in session-scoring, so firmware and API cannot hold different
 // thresholds and past sessions can be re-scored when the model changes.
 const compressionSchema = z.object({
-  id: z.uuid(),
-  cprSessionId: z.number(),
-  timestampMs: z.number().nonnegative().nullable().default(0),
-  startDepthMm: z.number().min(0).default(0),
-  endDepthMm: z.number().min(0).default(0),
-  createdAt: z.date(),
-  updatedAt: z.date().optional(),
+  timestampMs: z.number().nonnegative().max(MAX_RUN_DURATION_MS),
+  startDepthMm: z.number().min(0).max(MAX_DEPTH_MM),
+  endDepthMm: z.number().min(0).max(MAX_DEPTH_MM),
 });
 
-// The participant is never set by the caller: it is linked from the phone claim.
-export const createCprSessionSchema = createInsertSchema(cprSessions)
-  .omit({ participantId: true })
-  .extend({
-    registrationId: z.string().max(36).nullish(),
-    kioskId: z.string().max(36).nullish(),
-    buildId: z.string().max(64).nullish(),
-    compressions: z
-      .array(
-        compressionSchema.omit({
-          id: true,
-          cprSessionId: true,
-          createdAt: true,
-          updatedAt: true,
-        }),
-      )
-      .default([]),
-  });
+// This endpoint is open to any booth, so only fields the kiosk owns are listed:
+// the row id, timestamps and scores are the server's. Unknown keys are dropped
+// rather than rejected, so runs queued by older kiosk builds still save. The
+// participant is never set by the caller: it is linked from the phone claim.
+export const createCprSessionSchema = z.object({
+  publicId: z.string().min(1).max(36),
+  registrationId: z.string().max(36).nullish(),
+  locationId: z.string().max(36),
+  kioskId: z.string().max(36).nullish(),
+  buildId: z.string().max(64).nullish(),
+  compressions: z
+    .array(compressionSchema)
+    .max(MAX_COMPRESSIONS_PER_RUN)
+    .default([]),
+});
 
 /**
  * Letters in any script plus the punctuation real names use. ’ is listed

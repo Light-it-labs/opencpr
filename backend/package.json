@@ -26,6 +26,7 @@
     "lint": "eslint \"**/*.ts\"",
     "lint:fix": "eslint \"**/*.ts\" --fix",
     "type-check": "tsc --noEmit",
+    "test": "vitest run",
     "sentry:sourcemaps": "if [ -z \"$SENTRY_AUTH_TOKEN\" ]; then echo \"SENTRY_AUTH_TOKEN unset - skipping sourcemap upload\"; else sentry-cli sourcemaps inject ./dist && sentry-cli sourcemaps upload ./dist || echo \"WARNING: Sentry sourcemap upload failed - continuing deploy\"; fi",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -84,6 +85,7 @@
     "tsx": "^4.23.15",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.72.1",
+    "vitest": "^5.1.0",
     "winston": "^3.19.0",
     "zod": "^4.6.7"
   },
