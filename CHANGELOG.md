@@ -12,13 +12,13 @@ All notable changes to OpenCPR are listed here. The format follows [Keep a Chang
 
 ### Changed
 
-- Every booth must be paired after upgrading: create a code under Kiosks in the admin portal and type it on the kiosk's setup screen. Until then the API refuses its heartbeats and runs, and the kiosk keeps its unsent runs. The setup screen asks for the code in place of the location list, and a kiosk whose pairing is revoked returns to it.
+- The kiosk setup screen asks for a pairing code in place of the location list, and a kiosk whose pairing is revoked returns to it.
 
 ### Security
 
 - Saving a run now ignores any field the server owns (row id, timestamps, scores), caps a run at 60 compressions with bounded timing and depth values, and limits API request bodies to 16 kB.
-- A participant now gets at most one results email every 30 seconds, and a registration stops filing runs under its participant 2 hours after it was claimed (later runs are still saved, unlinked). Adds the `participants.results_emailed_at` column; run `pnpm db:migrate` when deploying.
-- Kiosks now pair with a location through a one-time code an admin creates in the portal, and the heartbeat and run save require the token a kiosk gets when it pairs. The kiosk and location of a heartbeat or run come from the pairing, never the request, and heartbeats no longer create kiosks. Admins can revoke a kiosk's pairing. Adds the `kiosk_pairing_codes` table and the `kiosks.token_hash` and `kiosks.paired_at` columns; run `pnpm db:migrate` when deploying.
+- A participant now gets at most one results email every 30 seconds, and a registration stops filing runs under its participant 2 hours after it was claimed (later runs are still saved, unlinked). Adds the `participants.results_emailed_at` column.
+- Kiosks now pair with a location through a one-time code an admin creates in the portal, and the heartbeat and run save require the token a kiosk gets when it pairs. The kiosk and location of a heartbeat or run come from the pairing, never the request, and heartbeats no longer create kiosks. Admins can revoke a kiosk's pairing. Adds the `kiosk_pairing_codes` table and the `kiosks.token_hash` and `kiosks.paired_at` columns.
 
 ## [1.0.1] - 2026-11-05
 

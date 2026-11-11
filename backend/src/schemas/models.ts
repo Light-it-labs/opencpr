@@ -19,9 +19,8 @@ const compressionSchema = z.object({
 
 // Only fields the kiosk owns are listed: the row id, timestamps and scores are
 // the server's, and so are the kiosk and location, taken from the booth's
-// pairing. Unknown keys are dropped rather than rejected, so runs queued by
-// older kiosk builds, which still send kioskId and locationId, still save. The
-// participant is never set by the caller: it is linked from the phone claim.
+// pairing. Unknown keys are dropped rather than rejected. The participant is
+// never set by the caller: it is linked from the phone claim.
 export const createCprSessionSchema = z.object({
   publicId: z.string().min(1).max(36),
   registrationId: z.string().max(36).nullish(),
@@ -56,8 +55,7 @@ export const claimSessionSchema = z.object({
 
 /**
  * Reported by each booth so a broken one is visible without walking to it. The
- * location comes from the booth's pairing; older builds still send one, which
- * is dropped.
+ * location comes from the booth's pairing.
  */
 export const kioskHeartbeatSchema = z.object({
   /** Last serial status the kiosk observed, e.g. reading / no-signal. */

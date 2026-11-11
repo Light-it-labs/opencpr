@@ -19,8 +19,6 @@ What to do before the first day, what visitors see, what the booth does on its o
 
 **First run, with a keyboard.** After the reboot the computer logs in and the kiosk opens on `/setup`. In the admin portal, under Kiosks, create a pairing code for the location (it needs the `admin` role, is valid for 15 minutes and works once). On the kiosk, pick the language, type the code and pick Arduino mode, and grant the serial port if Chrome asks (with the policy in place it does not). The grant lives in the kiosk's Chrome profile. Wait for the home screen, check that the booth appears under Kiosks in the admin portal with status `reading`, do one run yourself to the clicker, and then remove the keyboard. Calibrate the sensor for your manikin first if you have not: see [Build the sensor](hardware.md#calibrating-for-your-manikin).
 
-**Upgrading a booth set up before pairing.** From the release that adds pairing, the API refuses heartbeats and runs from a kiosk that has not been paired. Deploy the API (and run `pnpm db:migrate`), then pair every booth with a code from the portal before or right after its kiosk updates. A kiosk keeps its unsent runs until it is paired and sends them then.
-
 ## Daily operation
 
 ![The visitor's journey](journey.svg)
@@ -95,7 +93,7 @@ On Ubuntu, `update-firmware.sh` uses it: it compiles first, then switches the ki
 | Kiosk does not come up after boot | On Ubuntu, the service failed or the user session does not linger. On macOS, automatic login or the Login Item is missing | On macOS, check automatic login and that `start-kiosk.command` is a Login Item. On Ubuntu, `journalctl --user -u opencpr-kiosk` shows why. `systemctl --user status opencpr-kiosk` is `inactive` until the graphical session is up; if `loginctl show-user kiosk -p Linger` is not `yes`, run `sudo loginctl enable-linger kiosk` |
 | Kiosk stuck on a wrong screen | A run or an update left Chrome somewhere odd | On Ubuntu, `systemctl --user restart opencpr-kiosk` over ssh or on Ctrl+Alt+F3; on macOS, restart the kiosk with `start-kiosk.command`. Or power-cycle the booth |
 | Booth missing from the admin portal | No internet, setup not completed, or a new board | The kiosk only reports once it is paired on `/setup`; check the network; a new board is a new kiosk ID, so it appears as a new row |
-| Kiosk asks to be paired again | Its pairing was revoked in the portal, or it was set up before pairing existed | Create a new code under Kiosks in the admin portal and type it on `/setup`. Runs finished meanwhile wait in the kiosk and are sent once it is paired |
+| Kiosk asks to be paired again | Its pairing was revoked in the portal | Create a new code under Kiosks in the admin portal and type it on `/setup`. Runs finished meanwhile wait in the kiosk and are sent once it is paired |
 | Results email never arrives | No registration linked, SMTP settings or sender wrong, or the run is still in the outbox | Check the session under Sessions in the portal: a participant must be linked; check the `SMTP_*` settings and `EMAIL_FROM_ADDRESS` on the API; a run that has not reached the API yet has no email |
 | Alert fired outside opening hours | The location has no hours set, so it is monitored 24/7 | Set `opensAt` and `closesAt` on the location, with the right timezone |
 
