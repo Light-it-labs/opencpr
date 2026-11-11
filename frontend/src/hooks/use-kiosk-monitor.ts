@@ -111,8 +111,6 @@ export const useKioskMonitor = ({
     });
   }, [sendHeartbeat]);
 
-  // Only a paired kiosk may beat; the API refuses anything else. Depended on,
-  // not read through the ref, so pairing reports promptly.
   const isSetUp = Boolean(kioskToken);
 
   useEffect(() => {

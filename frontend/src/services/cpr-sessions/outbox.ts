@@ -81,8 +81,6 @@ const getStatus = (error: unknown) => {
   return isAxiosError(error) ? error.response?.status : undefined;
 };
 
-// 408 and 429 ask to be tried later, and 401 once the kiosk is paired again;
-// any other 4xx is refused however often it is sent.
 const isPermanentRejection = (error: unknown) => {
   const status = getStatus(error);
 
