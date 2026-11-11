@@ -1,7 +1,7 @@
 import type { Breadcrumb, ErrorEvent, Event } from "@sentry/react";
 import { describe, expect, it, vi } from "vitest";
 
-import { beforeSend } from "./sentry";
+import { beforeSend, recordsReplay } from "./sentry";
 import {
   redactUrl,
   scrubBreadcrumb,
@@ -265,5 +265,17 @@ describe("beforeSend", () => {
     expect(beforeSend(errorEvent("TypeError", "x is undefined"))?.request?.url).toBe(
       `${ORIGIN}/r/:id`,
     );
+  });
+});
+
+describe("recordsReplay", () => {
+  it("records on kiosk screens", () => {
+    expect(recordsReplay("/")).toBe(true);
+    expect(recordsReplay("/challenge/start")).toBe(true);
+    expect(recordsReplay("/register")).toBe(true);
+  });
+
+  it("does not record on the participant's phone page", () => {
+    expect(recordsReplay("/r/0b6f2c1e-0000-4000-8000-000000000001")).toBe(false);
   });
 });

@@ -31,10 +31,29 @@ export const beforeSend = (event: Sentry.ErrorEvent) => {
   return isExpectedNetworkNoise(event) ? null : scrubEvent(event);
 };
 
+export const recordsReplay = (pathname: string) => {
+  return !pathname.startsWith("/r/");
+};
+
 export const initializeSentry = () => {
   if (!isSentryEnabled) {
     return;
   }
+
+  // The participant's phone opens /r/<registration id> straight from the QR,
+  // and every replay snapshot stores the raw page address, so replays
+  // are recorded on the kiosk only. Anything tagged data-sentry-mask is
+  // redacted, and inputs are masked as a second line of defense.
+  const replay = recordsReplay(window.location.pathname)
+    ? [
+        Sentry.replayIntegration({
+          mask: ["[data-sentry-mask]"],
+          maskAllInputs: true,
+          blockAllMedia: true,
+          beforeAddRecordingEvent: scrubRecordingEvent,
+        }),
+      ]
+    : [];
 
   Sentry.init({
     dsn: env.VITE_SENTRY_DSN,
@@ -42,15 +61,7 @@ export const initializeSentry = () => {
     integrations: [
       Sentry.tanstackRouterBrowserTracingIntegration(router),
       Sentry.browserTracingIntegration(),
-      Sentry.replayIntegration({
-        // The registration form runs on the participant's own phone and collects
-        // a name and an email. Anything tagged data-sentry-mask is redacted in
-        // replays; inputs are masked everywhere as a second line of defense.
-        mask: ["[data-sentry-mask]"],
-        maskAllInputs: true,
-        blockAllMedia: true,
-        beforeAddRecordingEvent: scrubRecordingEvent,
-      }),
+      ...replay,
     ],
     tracesSampleRate: 1.0,
     tracePropagationTargets: [new RegExp(env.VITE_SENTRY_TRACE_PROPAGATION_TARGET_REGEX)],
