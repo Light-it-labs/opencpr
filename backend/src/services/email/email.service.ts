@@ -40,7 +40,8 @@ export const EmailService = {
       return true;
     } catch (error) {
       logger.error({
-        detail: `Error queueing access request notice to ${params.to}`,
+        detail: "Error queueing access request notice",
+        adminId: params.adminId,
         error,
       });
       Sentry.captureException(error);

@@ -78,6 +78,7 @@ export const AccessRequestsLogic = {
         admins.map(
           async (admin) =>
             await EmailService.sendAccessRequestNotice({
+              adminId: admin.id,
               to: admin.email,
               requesterEmail: email,
               requestedAt: requestedAt.toISOString(),

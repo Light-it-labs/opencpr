@@ -13,6 +13,7 @@ All notable changes to OpenCPR are listed here. The format follows [Keep a Chang
 ### Security
 
 - Saving a run now ignores any field the server owns (row id, timestamps, scores), caps a run at 60 compressions with bounded timing and depth values, and limits API request bodies to 16 kB.
+- The API no longer sends admin session ids, email addresses, admin search terms or claim-link ids to Sentry or its logs: failed database queries are reported without their values, query strings are dropped, and email delivery errors are reported without the recipient's address.
 
 ## [1.0.1] - 2026-11-05
 

@@ -26,6 +26,7 @@ export type SendEmailJobParams = {
 
 export type AccessRequestNoticeJobParams = {
   /** The admin this copy goes to; one job per admin. */
+  adminId: string;
   to: string;
   requesterEmail: string;
   /** ISO 8601: jobs travel as JSON, so a Date would arrive as a string anyway. */

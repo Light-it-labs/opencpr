@@ -1,6 +1,7 @@
 import * as Sentry from "@sentry/node";
 import { ZodError } from "zod";
 
+import { scrubBreadcrumb, scrubEvent, scrubSpan } from "./sentry-scrub";
 import { StatusCodes } from "./status-codes";
 
 /**
@@ -41,12 +42,21 @@ export const initializeSentry = () => {
         response: { deny: SENSITIVE_KEY_PARTS },
       },
       httpBodies: [],
-      urlQueryParams: { deny: SENSITIVE_KEY_PARTS },
+      // Admin searches carry names and emails, and no backend query param is
+      // needed to debug a failure.
+      urlQueryParams: false,
       genAI: { inputs: false, outputs: false },
       databaseQueryData: false,
       queues: false,
       graphQL: { document: false, variables: false },
     },
+    // Drizzle puts query values (session ids, emails, search terms) in its
+    // error messages, and claim links put a registration id in the URL.
+    // beforeSendSpan rather than beforeSendTransaction: SDK 11 streams spans
+    // by default and skips the latter.
+    beforeSend: scrubEvent,
+    beforeSendSpan: scrubSpan,
+    beforeBreadcrumb: scrubBreadcrumb,
     integrations: [
       Sentry.httpIntegration({ maxRequestBodySize: "none" }),
       // Sentry counts an error without an HTTP status as a 500. A ZodError has
