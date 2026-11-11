@@ -1,5 +1,5 @@
 import { subDays } from "date-fns";
-import { and, eq, gt, isNull, lt, or } from "drizzle-orm";
+import { and, count, eq, gt, gte, isNull, lt, max, or } from "drizzle-orm";
 
 import { db, magicLinks, NewMagicLink } from "../db";
 
@@ -18,6 +18,17 @@ export const MagicLinksRepository = {
         );
       await tx.insert(magicLinks).values(data);
     });
+  },
+
+  issuedSince: async (userId: string, since: Date) => {
+    const [row] = await db
+      .select({ total: count(), latestAt: max(magicLinks.createdAt) })
+      .from(magicLinks)
+      .where(
+        and(eq(magicLinks.userId, userId), gte(magicLinks.createdAt, since)),
+      );
+
+    return { total: row?.total ?? 0, latestAt: row?.latestAt ?? null };
   },
 
   /**

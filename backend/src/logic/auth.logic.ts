@@ -1,5 +1,5 @@
 import { createHash, randomBytes } from "node:crypto";
-import { addDays, addMinutes } from "date-fns";
+import { addDays, addMinutes, isAfter, subHours, subSeconds } from "date-fns";
 
 import { env, logger } from "@/config";
 import { UnauthorizedError } from "@/exceptions";
@@ -21,6 +21,14 @@ const SESSION_TTL_DAYS = 7;
 
 /** Long enough to reach the inbox, short enough that a leaked link dies fast. */
 const MAGIC_LINK_TTL_MINUTES = 15;
+
+/**
+ * Each link supersedes the previous one, so without a per-user limit anyone
+ * who knows a staff email could flood that inbox and keep killing the real
+ * link from many IPs.
+ */
+const MAGIC_LINK_COOLDOWN_SECONDS = 60;
+const MAGIC_LINKS_PER_HOUR = 5;
 
 /** 48 random bytes is 384 bits: not guessable, and ~64 URL-safe characters. */
 const MAGIC_LINK_TOKEN_BYTES = 48;
@@ -76,13 +84,27 @@ export const AuthLogic = {
       return;
     }
 
+    const now = new Date();
+    const recent = await MagicLinksRepository.issuedSince(
+      user.id,
+      subHours(now, 1),
+    );
+    const isCoolingDown =
+      recent.latestAt !== null &&
+      isAfter(recent.latestAt, subSeconds(now, MAGIC_LINK_COOLDOWN_SECONDS));
+
+    if (isCoolingDown || recent.total >= MAGIC_LINKS_PER_HOUR) {
+      logger.info({ action: "magic_link_throttled", userId: user.id });
+      return;
+    }
+
     const token = randomBytes(MAGIC_LINK_TOKEN_BYTES).toString("base64url");
     const ttlMinutes = MAGIC_LINK_TTL_MINUTES;
 
     await MagicLinksRepository.issue({
       userId: user.id,
       tokenHash: hashToken(token),
-      expiresAt: addMinutes(new Date(), ttlMinutes),
+      expiresAt: addMinutes(now, ttlMinutes),
     });
 
     // Not awaited: an invited and an unknown email must take the same time to

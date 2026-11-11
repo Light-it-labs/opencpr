@@ -1,3 +1,5 @@
+import { subHours } from "date-fns";
+
 import { env, logger } from "@/config";
 import { ConflictError, NotFoundError } from "@/exceptions";
 import { AuthLogic } from "@/logic";
@@ -14,6 +16,13 @@ import { AuthenticatedUser } from "@/types";
 import { Sentry } from "../../config/sentry";
 import { db, type DbExecutor } from "../../db";
 import { UsersLogic } from "./users.logic";
+
+/**
+ * Every unknown email files a request and mails every admin, so without a
+ * cap a script posting fresh addresses floods the admins' inboxes. Requests
+ * over the cap are still stored and listed on the users page.
+ */
+const ACCESS_REQUEST_NOTICES_PER_HOUR = 10;
 
 /** Locks the request and lets it through only while nobody reviewed it. */
 const lockPending = async (id: string, executor: DbExecutor) => {
@@ -66,6 +75,18 @@ export const AccessRequestsLogic = {
     requestedAt: Date;
   }) => {
     try {
+      const filedLastHour = await AccessRequestsRepository.countCreatedSince(
+        subHours(requestedAt, 1),
+      );
+
+      if (filedLastHour > ACCESS_REQUEST_NOTICES_PER_HOUR) {
+        logger.warn({
+          action: "access_request_notice_skipped_over_cap",
+          filedLastHour,
+        });
+        return;
+      }
+
       const admins = await UsersRepository.listActiveByRole(USER_ROLES.admin);
 
       if (admins.length === 0) {
