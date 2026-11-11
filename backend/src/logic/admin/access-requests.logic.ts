@@ -17,11 +17,7 @@ import { Sentry } from "../../config/sentry";
 import { db, type DbExecutor } from "../../db";
 import { UsersLogic } from "./users.logic";
 
-/**
- * Every unknown email files a request and mails every admin, so without a
- * cap a script posting fresh addresses floods the admins' inboxes. Requests
- * over the cap are still stored and listed on the users page.
- */
+// Requests over the cap are still stored and listed; only the admin emails stop.
 const ACCESS_REQUEST_NOTICES_PER_HOUR = 10;
 
 /** Locks the request and lets it through only while nobody reviewed it. */

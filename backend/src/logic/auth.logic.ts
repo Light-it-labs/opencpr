@@ -22,11 +22,7 @@ const SESSION_TTL_DAYS = 7;
 /** Long enough to reach the inbox, short enough that a leaked link dies fast. */
 const MAGIC_LINK_TTL_MINUTES = 15;
 
-/**
- * Each link supersedes the previous one, so without a per-user limit anyone
- * who knows a staff email could flood that inbox and keep killing the real
- * link from many IPs.
- */
+// Each link supersedes the last, so without a per-user limit anyone could keep killing the real one.
 const MAGIC_LINK_COOLDOWN_SECONDS = 60;
 const MAGIC_LINKS_PER_HOUR = 5;
 
