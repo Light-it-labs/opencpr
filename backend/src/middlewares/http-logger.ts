@@ -12,7 +12,7 @@ export const httpLoggerFormat: morgan.FormatFn<Request, Response> = (
 ) =>
   [
     info.method?.(req, res),
-    info.url?.(req, res),
+    req.originalUrl.split("?")[0],
     info.status?.(req, res),
     info.res?.(req, res, "content-length"),
     "-",
