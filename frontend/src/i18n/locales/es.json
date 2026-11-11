@@ -223,10 +223,8 @@
     "consent": "Autorizo a [YOUR ORGANIZATION] a tratar mi nombre y email para gestionar mi participación y enviarme mis resultados.",
     "submit": "Listo, vamos",
     "invalid": "Revisá tu nombre, apellido y email.",
-    "doneTitle": "¡Ya estás!",
-    "doneBody": "Volvé a la pantalla grande — empieza sola en unos segundos.",
-    "welcomeBackTitle": "¡Qué bueno verte otra vez, {name}!",
-    "welcomeBackBody": "Esta es tu vuelta número {attempt}. A ver si superás tu mejor puntaje."
+    "doneTitle": "¡Ya estás, {name}!",
+    "doneBody": "Volvé a la pantalla grande — empieza sola en unos segundos."
   },
   "crash": {
     "title": "Algo salió mal",

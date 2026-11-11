@@ -93,16 +93,12 @@ export const CprSessionsLogic = {
 
   /**
    * Has a phone registration landed for this visit yet? Polled by the kiosk.
-   * The first name lets the booth check a replay is still the same person
-   * before filing it under their email.
+   * Anyone holding the registration id can poll it, so who claimed it stays out.
    */
   getClaim: async (registrationId: string) => {
     const claim = await CprSessionsRepository.getClaim(registrationId);
 
-    return {
-      claimed: Boolean(claim),
-      firstName: claim?.firstName ?? null,
-    };
+    return { claimed: Boolean(claim) };
   },
 
   /**
@@ -130,7 +126,6 @@ export const CprSessionsLogic = {
       });
 
     // Counted before this run exists, so it is how many they have already done.
-    // The phone uses it to greet a returning participant by name.
     const previousAttempts = existed
       ? await CprSessionsRepository.countAttempts({
           participantId: participant.id,
@@ -184,12 +179,9 @@ export const CprSessionsLogic = {
       }
     }
 
-    return {
-      claimed: true,
-      returning: previousAttempts > 0,
-      firstName: participant.firstName,
-      attempt: previousAttempts + 1,
-    };
+    // The form is public, so the answer is the same for a new email and a
+    // known one: nothing here may tell a stranger who has played before.
+    return { claimed: true };
   },
 
   create: async (data: CreateCprSession) => {

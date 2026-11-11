@@ -67,12 +67,6 @@ export const sessionClaimSchema = z.object({
   claimed: z.boolean(),
 });
 
-/** Returned to the phone on submit, so it can greet someone by name. */
 export const claimResultSchema = z.object({
   claimed: z.boolean(),
-  /** True only if they have actually finished a run before, not merely registered. */
-  returning: z.boolean(),
-  firstName: z.string(),
-  /** Which go this one will be, counting every previous run on this email. */
-  attempt: z.number(),
 });

@@ -223,10 +223,8 @@
     "consent": "I authorize [YOUR ORGANIZATION] to process my name and email to manage my participation and send me my results.",
     "submit": "Done, let's go",
     "invalid": "Please check your name, last name and email.",
-    "doneTitle": "You're in",
-    "doneBody": "Head back to the big screen — it starts on its own in a few seconds.",
-    "welcomeBackTitle": "Welcome back, {name}!",
-    "welcomeBackBody": "This is run number {attempt}. See if you can beat your best score."
+    "doneTitle": "You're in, {name}!",
+    "doneBody": "Head back to the big screen — it starts on its own in a few seconds."
   },
   "crash": {
     "title": "Something went wrong",

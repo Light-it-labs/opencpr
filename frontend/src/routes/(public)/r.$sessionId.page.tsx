@@ -5,7 +5,7 @@ import { twMerge } from "tailwind-merge";
 
 import { Logo } from "@/components/logo";
 import { Button, Checkbox, Label } from "@/components/ui";
-import { type ClaimResult, claimSessionSchema, useClaimCprSession } from "@/services/cpr-sessions";
+import { claimSessionSchema, useClaimCprSession } from "@/services/cpr-sessions";
 
 /**
  * Opened on the participant's own phone by scanning the kiosk QR. All typing
@@ -26,7 +26,7 @@ const RouteComponent = () => {
   });
   const [hasConsented, setHasConsented] = useState(false);
   const [showErrors, setShowErrors] = useState(false);
-  const [claimResult, setClaimResult] = useState<ClaimResult | null>(null);
+  const [claimedName, setClaimedName] = useState<string | null>(null);
 
   const result = claimSessionSchema.safeParse(values);
 
@@ -49,8 +49,8 @@ const RouteComponent = () => {
     );
   };
   const { isPending, mutate } = useClaimCprSession({
-    onSuccess: (data) => {
-      setClaimResult(data);
+    onSuccess: (_data, variables) => {
+      setClaimedName(variables.firstName);
     },
   });
 
@@ -70,22 +70,13 @@ const RouteComponent = () => {
     mutate({ publicId: sessionId, ...result.data });
   };
 
-  if (claimResult) {
-    // Someone on their second go is greeted by name instead of being told what
-    // they already know. Gated on a finished run, so registering twice without
-    // ever playing does not produce a "welcome back".
+  if (claimedName) {
     return (
       <main className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center gap-4 p-6 text-center">
         <h1 className="font-heading text-3xl font-bold text-foreground">
-          {claimResult.returning
-            ? t("claim.welcomeBackTitle", { name: claimResult.firstName })
-            : t("claim.doneTitle")}
+          {t("claim.doneTitle", { name: claimedName })}
         </h1>
-        <p className="text-lg text-muted-foreground">
-          {claimResult.returning
-            ? t("claim.welcomeBackBody", { attempt: claimResult.attempt })
-            : t("claim.doneBody")}
-        </p>
+        <p className="text-lg text-muted-foreground">{t("claim.doneBody")}</p>
       </main>
     );
   }

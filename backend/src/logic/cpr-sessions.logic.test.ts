@@ -236,3 +236,55 @@ describe("CprSessionsLogic.claim results email", () => {
     expect(EmailService.sendResults).not.toHaveBeenCalled();
   });
 });
+
+describe("CprSessionsLogic claim answers", () => {
+  const form = {
+    firstName: "Someone",
+    lastName: "Else",
+    email: participant.email,
+  };
+
+  beforeEach(() => {
+    givenClaim(null);
+    vi.mocked(CprSessionsRepository.saveClaim).mockResolvedValue(
+      participant.id,
+    );
+    vi.mocked(CprSessionsRepository.countAttempts).mockResolvedValue(3);
+  });
+
+  it("answers a known email without its stored name or run count", async () => {
+    vi.mocked(ParticipantsRepository.findOrCreateByEmail).mockResolvedValue({
+      participant,
+      existed: true,
+    });
+
+    const result = await CprSessionsLogic.claim("registration-0001", form);
+
+    expect(result).toStrictEqual({ claimed: true });
+  });
+
+  it("answers a new email exactly as it answers a known one", async () => {
+    vi.mocked(ParticipantsRepository.findOrCreateByEmail).mockResolvedValue({
+      participant: { ...participant, firstName: form.firstName },
+      existed: false,
+    });
+
+    const result = await CprSessionsLogic.claim("registration-0001", form);
+
+    expect(result).toStrictEqual({ claimed: true });
+  });
+
+  it("tells the kiosk only whether the registration was claimed", async () => {
+    givenClaim(subMinutes(NOW, 1));
+
+    const result = await CprSessionsLogic.getClaim("registration-0001");
+
+    expect(result).toStrictEqual({ claimed: true });
+  });
+
+  it("reports an unclaimed registration", async () => {
+    const result = await CprSessionsLogic.getClaim("registration-0001");
+
+    expect(result).toStrictEqual({ claimed: false });
+  });
+});
