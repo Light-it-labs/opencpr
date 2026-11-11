@@ -10,6 +10,10 @@ All notable changes to OpenCPR are listed here. The format follows [Keep a Chang
 
 - Spanish translation of the kiosk and the phone registration form. Each kiosk picks its language on the setup screen and keeps it per browser; a visitor's phone follows the phone's language and falls back to English.
 
+### Removed
+
+- The unused PM2 cluster config (`backend/ecosystem.config.cjs`). It ran one API process per CPU, and each process keeps its own rate-limit counters, so it multiplied every limit. The Docker image runs a single process.
+
 ## [1.0.1] - 2026-11-05
 
 ### Security

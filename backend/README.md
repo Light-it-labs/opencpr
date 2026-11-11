@@ -232,11 +232,11 @@ there is nothing to average.
 
 A BullMQ job (`kiosk-health`, scheduler id `kiosk-health-check`) runs every 5
 minutes (`*/5 * * * *`, server timezone) inside the API process, next to the
-email worker. Every PM2 instance calls `upsertJobScheduler` with the same id, so
+email worker. Every API process calls `upsertJobScheduler` with the same id, so
 the schedule is registered once; `SIGTERM` and `SIGINT` close the workers before
 exiting. The worker starts before the schedule is registered, and registration
 is tried up to 5 times, waiting 2, 4, 6 and 8 s between attempts; if it still
-fails the process logs to Sentry and exits so PM2 restarts it rather than
+fails the process logs to Sentry and exits so Docker restarts it rather than
 running with alerting off. The queue allows one run at a time across
 processes. A failed run is tried up to 3 times in all, with exponential backoff
 from 5 s.
