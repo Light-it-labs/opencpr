@@ -12,6 +12,12 @@ export const participants = m.mysqlTable("participants", {
   firstName: m.text("first_name").notNull(),
   lastName: m.text("last_name"),
   email: m.text().notNull(),
+  /**
+   * When results were last queued to this address. Anyone holding a
+   * registration id can file runs under its participant, so results emails
+   * are throttled per participant rather than per run.
+   */
+  resultsEmailedAt: m.timestamp("results_emailed_at"),
   ...timestamps,
 });
 

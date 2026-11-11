@@ -1,3 +1,5 @@
+import { isBefore, subHours, subSeconds } from "date-fns";
+
 import { logger } from "@/config";
 import {
   ConflictError,
@@ -55,6 +57,25 @@ const registrationTakenError = () =>
 
 const startOfToday = (timezone: string) =>
   startOfLocalDay(timezone, new Date());
+
+/**
+ * The registration id is printed in the booth QR and the phone URL, so anyone
+ * who saw it could post runs under it and have results mailed to its owner.
+ * A real replay at the booth takes 45 to 90 s, so it still gets its email.
+ */
+const RESULTS_EMAIL_INTERVAL_SECONDS = 30;
+
+/** A booth visit lasts minutes; a registration is not a standing pass. */
+const REGISTRATION_LIFETIME_HOURS = 2;
+
+const isRegistrationExpired = (claimedAt: Date) =>
+  isBefore(claimedAt, subHours(new Date(), REGISTRATION_LIFETIME_HOURS));
+
+const reserveResultsEmail = (participantId: string) =>
+  ParticipantsRepository.reserveResultsEmail(
+    participantId,
+    subSeconds(new Date(), RESULTS_EMAIL_INTERVAL_SECONDS),
+  );
 
 export const CprSessionsLogic = {
   get: async (id: CprSession["id"]) => {
@@ -130,10 +151,12 @@ export const CprSessionsLogic = {
 
     // Backfills every run already recorded under this registration, not just
     // one: the participant may have replayed before their phone form landed.
-    await CprSessionsRepository.linkParticipantByRegistration(
-      registrationId,
-      participant.id,
-    );
+    if (!existingClaim || !isRegistrationExpired(existingClaim.createdAt)) {
+      await CprSessionsRepository.linkParticipantByRegistration(
+        registrationId,
+        participant.id,
+      );
+    }
 
     // play-then-register: the run was stored before we knew who played it, so
     // create() had nobody to email. This is the first moment it can be sent.
@@ -141,7 +164,7 @@ export const CprSessionsLogic = {
       const session =
         await CprSessionsRepository.getLatestByRegistration(registrationId);
 
-      if (session) {
+      if (session && (await reserveResultsEmail(participant.id))) {
         logger.info(
           `Sending results of session ${session.id} to participant ${participant.id}`,
         );
@@ -192,7 +215,8 @@ export const CprSessionsLogic = {
     let { participantId } = session;
     if (created && !participantId && data.registrationId) {
       const claim = await CprSessionsRepository.getClaim(data.registrationId);
-      if (claim) {
+      // Past its lifetime the run is still kept, just not filed under anyone.
+      if (claim && !isRegistrationExpired(claim.createdAt)) {
         await CprSessionsRepository.linkParticipantByRegistration(
           data.registrationId,
           claim.participantId,
@@ -231,7 +255,7 @@ export const CprSessionsLogic = {
     if (created && participantId) {
       const participant = await ParticipantsRepository.get(participantId);
 
-      if (participant?.email) {
+      if (participant?.email && (await reserveResultsEmail(participant.id))) {
         logger.info(
           `Sending results of session ${session.id} to participant ${participant.id}`,
         );
