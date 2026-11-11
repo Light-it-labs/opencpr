@@ -1,6 +1,7 @@
 import * as Sentry from "@sentry/node";
 import { ZodError } from "zod";
 
+import { redact } from "../utils/redact";
 import { StatusCodes } from "./status-codes";
 
 /**
@@ -41,11 +42,19 @@ export const initializeSentry = () => {
         response: { deny: SENSITIVE_KEY_PARTS },
       },
       httpBodies: [],
-      urlQueryParams: { deny: SENSITIVE_KEY_PARTS },
+      // Admin search params carry names and emails.
+      urlQueryParams: false,
       genAI: { inputs: false, outputs: false },
       databaseQueryData: false,
       queues: false,
       graphQL: { document: false, variables: false },
+    },
+    beforeSend: (event) => {
+      event.exception?.values?.forEach((exception) => {
+        if (exception.value) exception.value = redact(exception.value);
+      });
+
+      return event;
     },
     integrations: [
       Sentry.httpIntegration({ maxRequestBodySize: "none" }),
