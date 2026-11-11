@@ -24,7 +24,7 @@ import {
   PerformanceStatsQuery,
   StatsQuery,
 } from "@/schemas";
-import { isDuplicateEntry, likeContains } from "@/utils";
+import { isDuplicateEntry, likeContains, SessionStatistics } from "@/utils";
 
 import {
   cprCompressions,
@@ -375,7 +375,7 @@ export const CprSessionsRepository = {
    * A `publicId` that is already stored is a kiosk retrying a save: the stored
    * run comes back with `created: false` and nothing is written.
    */
-  create: async (data: CreateCprSession) => {
+  create: async (data: CreateCprSession & SessionStatistics) => {
     const { compressions, ...sessionData } = data;
 
     return await db.transaction(async (tx) => {
