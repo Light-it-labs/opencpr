@@ -175,8 +175,7 @@ export const CprSessionsLogic = {
       }
     }
 
-    // The form is public, so the answer is the same for a new email and a
-    // known one: nothing here may tell a stranger who has played before.
+    // Same answer for a new and a known email, so the public form cannot reveal who has played.
     return { claimed: true };
   },
 
