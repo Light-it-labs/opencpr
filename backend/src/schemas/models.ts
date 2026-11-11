@@ -19,8 +19,8 @@ const compressionSchema = z.object({
 
 // This endpoint is open to any booth, so only fields the kiosk owns are listed:
 // the row id, timestamps and scores are the server's. Unknown keys are dropped
-// rather than rejected, so runs queued by older kiosk builds still save. The
-// participant is never set by the caller: it is linked from the phone claim.
+// rather than rejected. The participant is never set by the caller: it is
+// linked from the phone claim.
 export const createCprSessionSchema = z.object({
   publicId: z.string().min(1).max(36),
   registrationId: z.string().max(36).nullish(),
