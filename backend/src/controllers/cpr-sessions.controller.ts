@@ -2,12 +2,14 @@ import { Request, Response } from "express";
 
 import { StatusCodes } from "@/config";
 import { CprSessionsLogic } from "@/logic";
+import { getKiosk } from "@/middlewares";
 import {
   claimSessionSchema,
   createCprSessionSchema,
   idParamSchema,
   publicIdParamSchema,
 } from "@/schemas";
+import { KioskRequest } from "@/types";
 
 export const CprSessionsController = {
   get: async (req: Request, res: Response) => {
@@ -32,10 +34,10 @@ export const CprSessionsController = {
     res.status(StatusCodes.CREATED).json({ data });
   },
 
-  create: async (req: Request, res: Response) => {
+  create: async (req: KioskRequest, res: Response) => {
     const validatedData = createCprSessionSchema.parse(req.body);
 
-    const data = await CprSessionsLogic.create(validatedData);
+    const data = await CprSessionsLogic.create(validatedData, getKiosk(req));
     res.status(StatusCodes.CREATED).json({ data });
   },
 };

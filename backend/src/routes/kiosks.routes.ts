@@ -1,7 +1,13 @@
 import { Router } from "express";
 
 import { KiosksController } from "@/controllers";
-import { authGuard, requireRole, tryCatchWrapper } from "@/middlewares";
+import {
+  authGuard,
+  kioskAuth,
+  perMinuteRateLimit,
+  requireRole,
+  tryCatchWrapper,
+} from "@/middlewares";
 import { USER_ROLES } from "@/models";
 
 export const KiosksRouter = Router();
@@ -13,7 +19,14 @@ KiosksRouter.get(
   requireRole(USER_ROLES.admin),
   tryCatchWrapper(KiosksController.list),
 );
+// Public: the code is the credential, so it is a guessing target.
+KiosksRouter.post(
+  "/pair",
+  perMinuteRateLimit(10),
+  tryCatchWrapper(KiosksController.pair),
+);
 KiosksRouter.post(
   "/:kioskId/heartbeat",
+  kioskAuth(),
   tryCatchWrapper(KiosksController.heartbeat),
 );

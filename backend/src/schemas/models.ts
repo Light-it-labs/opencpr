@@ -17,15 +17,14 @@ const compressionSchema = z.object({
   endDepthMm: z.number().min(0).max(MAX_DEPTH_MM),
 });
 
-// This endpoint is open to any booth, so only fields the kiosk owns are listed:
-// the row id, timestamps and scores are the server's. Unknown keys are dropped
-// rather than rejected, so runs queued by older kiosk builds still save. The
+// Only fields the kiosk owns are listed: the row id, timestamps and scores are
+// the server's, and so are the kiosk and location, taken from the booth's
+// pairing. Unknown keys are dropped rather than rejected, so runs queued by
+// older kiosk builds, which still send kioskId and locationId, still save. The
 // participant is never set by the caller: it is linked from the phone claim.
 export const createCprSessionSchema = z.object({
   publicId: z.string().min(1).max(36),
   registrationId: z.string().max(36).nullish(),
-  locationId: z.string().max(36),
-  kioskId: z.string().max(36).nullish(),
   buildId: z.string().max(64).nullish(),
   compressions: z
     .array(compressionSchema)
@@ -55,9 +54,12 @@ export const claimSessionSchema = z.object({
   email: z.email(),
 });
 
-/** Reported by each booth so a broken one is visible without walking to it. */
+/**
+ * Reported by each booth so a broken one is visible without walking to it. The
+ * location comes from the booth's pairing; older builds still send one, which
+ * is dropped.
+ */
 export const kioskHeartbeatSchema = z.object({
-  locationId: z.string().max(36).nullish(),
   /** Last serial status the kiosk observed, e.g. reading / no-signal. */
   serialStatus: z.string().max(32).nullish(),
   /** When the sensor was last heard from; the port is only open during a run. */
@@ -68,6 +70,11 @@ export const kioskHeartbeatSchema = z.object({
 });
 
 export const kioskIdParamSchema = z.object({
+  kioskId: z.string().min(1).max(36),
+});
+
+export const kioskPairSchema = z.object({
+  code: z.string().min(1).max(32),
   kioskId: z.string().min(1).max(36),
 });
 
@@ -110,6 +117,7 @@ export type CreateCprSession = z.infer<typeof createCprSessionSchema>;
 export type Participant = InferSelectModel<typeof participants>;
 export type ClaimSession = z.infer<typeof claimSessionSchema>;
 export type KioskHeartbeat = z.infer<typeof kioskHeartbeatSchema>;
+export type KioskPair = z.infer<typeof kioskPairSchema>;
 export type MagicLinkRequest = z.infer<typeof magicLinkRequestSchema>;
 export type MagicLinkVerify = z.infer<typeof magicLinkVerifySchema>;
 export type PasskeyRegister = z.infer<typeof passkeyRegisterSchema>;

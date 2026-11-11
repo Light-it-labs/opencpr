@@ -1,4 +1,4 @@
-import { createHash, randomBytes } from "node:crypto";
+import { randomBytes } from "node:crypto";
 import { addDays, addMinutes } from "date-fns";
 
 import { env, logger } from "@/config";
@@ -12,6 +12,7 @@ import {
   UsersRepository,
 } from "@/repositories";
 import { AuthEmailService } from "@/services";
+import { hashToken } from "@/utils";
 
 import { Sentry } from "../config/sentry";
 import { AccessRequestsLogic } from "./admin/access-requests.logic";
@@ -24,10 +25,6 @@ const MAGIC_LINK_TTL_MINUTES = 15;
 
 /** 48 random bytes is 384 bits: not guessable, and ~64 URL-safe characters. */
 const MAGIC_LINK_TOKEN_BYTES = 48;
-
-/** Only this digest is stored, so a database leak yields no usable links. */
-const hashToken = (token: string) =>
-  createHash("sha256").update(token).digest("hex");
 
 const userView = async (
   user: Pick<User, "id" | "email" | "name" | "role">,

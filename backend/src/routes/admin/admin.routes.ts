@@ -3,6 +3,7 @@ import { Router } from "express";
 import { authGuard } from "@/middlewares";
 
 import { AccessRequestsRouter } from "./access-requests.routes";
+import { KioskPairingCodesRouter, KiosksRouter } from "./kiosks.routes";
 import { LocationsRouter } from "./locations.routes";
 import { ParticipantsRouter } from "./participants.routes";
 import { SessionsRouter } from "./sessions.routes";
@@ -20,3 +21,5 @@ AdminRouter.use("/participants", ParticipantsRouter);
 AdminRouter.use("/stats", StatsRouter);
 AdminRouter.use("/users", UsersRouter);
 AdminRouter.use("/access-requests", AccessRequestsRouter);
+AdminRouter.use("/kiosks", KiosksRouter);
+AdminRouter.use("/kiosk-pairing-codes", KioskPairingCodesRouter);

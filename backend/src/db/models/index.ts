@@ -13,3 +13,4 @@ export * from "./auth-challenges.model";
 export * from "./kiosk-alerts.model";
 export * from "./access-requests.model";
 export * from "./user-locations.model";
+export * from "./kiosk-pairing-codes.model";

@@ -64,6 +64,25 @@ location's `timezone`) is already past are left out; a location with no
 `endDate` is always listed. The admin list (`GET /admin/locations`) is not
 filtered this way.
 
+A booth must be paired before it can report or save runs. An admin creates a
+one-time code for a location in the portal (`POST /admin/kiosk-pairing-codes`);
+the kiosk's setup screen sends it with `POST /kiosks/pair { code, kioskId }`.
+The code is 8 characters, valid for 15 minutes and single-use; case, spaces and
+dashes are ignored. A valid code answers 200 with `{ token, location: { id,
+name, city } }` and pairs the kiosk with the code's location, creating it or
+replacing its earlier token. An unknown, used or expired code answers 400 with
+the same body. The endpoint allows 10 requests a minute per IP. Only the
+sha256 of codes and tokens is stored.
+
+The heartbeat (`POST /kiosks/:kioskId/heartbeat`) and the run save (`POST
+/cpr-sessions`) need `Authorization: Bearer <token>` and answer 401 without a
+token of a paired kiosk. Both take the kiosk and its location from the
+pairing: a `locationId` or `kioskId` in the body is ignored, and a heartbeat
+never creates a kiosk. A heartbeat under another id moves the paired kiosk to
+that id (the kiosk adopting its board's id), with its alert state and runs,
+and answers 409 if another kiosk already has it; pairing again under that id
+resolves it. The claim endpoints stay public.
+
 `POST /cpr-sessions` stores a run and answers 201 with where it placed among
 today's runs at that location (today in the location's `timezone`), and nothing
 else: `{ publicId, position, percentile, participantsToday }`. `position` is its
@@ -130,7 +149,8 @@ the proxy setup changes.
 Rate limits are per IP and per minute. A booth's own calls (heartbeat, the poll
 for its pending registration, the run save) share a budget of 240, apart from
 everything else (phones, the portal), which gets 120. The
-magic link and passkey endpoints add their own tighter limits on top.
+magic link, passkey and kiosk pairing endpoints add their own tighter limits
+on top.
 
 ## Admin API
 
@@ -150,7 +170,8 @@ locations: a `locationId` outside them answers 403, and leaving it out reads all
 of theirs. That covers sessions, stats, performance stats, participants (only
 those with a run at one of their locations, with figures and `locations` over
 those runs only) and `GET /admin/locations`. A session at another location
-answers 404. `GET /kiosks` is admin only.
+answers 404. `GET /kiosks` is admin only; each kiosk carries `pairedAt`
+(`null` when unpaired or revoked), never its token.
 
 Asking for a magic link with an email that has no active user still answers
 202 with the same body and sends nothing, but files an access request. A new
@@ -197,6 +218,8 @@ With the default sort ties fall back to the row id.
 | `POST /admin/users`                                           | Admin only. Invite `{ email, name?, role, locationIds? }`. 409 if active; re-invites a revoked user with that role and those locations. 400 for an unknown location or locations on an admin. No email is sent. 201. |
 | `PATCH /admin/users/:id`                                      | Admin only. `{ role?, locationIds? }`, at least one, changes another user's role or locations; `locationIds` replaces the list. Becoming an admin clears it. 400 for yourself, an unknown location or locations on an admin. 200. |
 | `DELETE /admin/users/:id`                                    | Admin only. Revoke and end their sessions. 400 for yourself. 204.                                      |
+| `POST /admin/kiosk-pairing-codes`                             | Admin only. `{ locationId }` answers 201 with `{ code, expiresAt }`, shown once, valid 15 minutes. 404 for an unknown or disabled location, 400 for one past its end date. |
+| `DELETE /admin/kiosks/:kioskId/pairing`                       | Admin only. Revoke the kiosk's token; its heartbeats and run saves answer 401 until it pairs again. 404 if missing. 204. |
 | `GET /admin/access-requests`                                  | Admin only. Pending access requests, newest first: `id`, `email`, `status`, `createdAt`.                           |
 | `POST /admin/access-requests/:id/approve`                     | Admin only. `{ role, locationIds? }` invites the email with that role and locations (409 if already active; 400 as for an invite) and emails a magic link. 409 unless pending. 200. |
 | `POST /admin/access-requests/:id/reject`                      | Admin only. 409 unless pending; later sign-in attempts from that email are not queued again. 200.      |
@@ -258,8 +281,8 @@ A kiosk in maintenance is skipped the same way: while its last heartbeat
 reported the `maintenance` serial status, for up to 20 minutes from that
 heartbeat. Besides the schedule, every heartbeat triggers an immediate check of
 its kiosk. That check is skipped when the kiosk's state changed less than 60 s
-ago, because heartbeats are not authenticated and could otherwise flip a state
-back and forth; the scheduled check catches up within minutes.
+ago, because a flapping booth, or anyone holding its token, could otherwise
+flip a state back and forth; the scheduled check catches up within minutes.
 
 Each kiosk is reduced to one state, using the thresholds of `GET /kiosks`:
 

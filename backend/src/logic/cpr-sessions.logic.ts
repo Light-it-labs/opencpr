@@ -13,6 +13,7 @@ import {
 } from "@/repositories";
 import { ClaimSession, CprSession, CreateCprSession } from "@/schemas";
 import { EmailService } from "@/services";
+import { AuthenticatedKiosk } from "@/types";
 import { scoreSession, startOfLocalDay } from "@/utils";
 
 /**
@@ -192,11 +193,12 @@ export const CprSessionsLogic = {
     };
   },
 
-  create: async (data: CreateCprSession) => {
-    const location = await LocationsRepository.get(data.locationId);
+  /** The kiosk and location are the paired booth's, never the payload's. */
+  create: async (data: CreateCprSession, kiosk: AuthenticatedKiosk) => {
+    const location = await LocationsRepository.get(kiosk.locationId);
     if (!location) {
       throw new UnprocessableEntityError(
-        `Location with id ${data.locationId} does not exist`,
+        `Location with id ${kiosk.locationId} does not exist`,
       );
     }
 
@@ -207,6 +209,8 @@ export const CprSessionsLogic = {
     const { created, session } = await CprSessionsRepository.create({
       ...sessionData,
       ...sessionStats,
+      kioskId: kiosk.kioskId,
+      locationId: kiosk.locationId,
       compressions,
     });
 
@@ -270,8 +274,8 @@ export const CprSessionsLogic = {
       }
     }
 
-    // Only what the kiosk shows. The endpoint is unauthenticated, so the run's
-    // ids and who played stay out of the answer, a replayed publicId included.
+    // Only what the kiosk shows. Any paired booth may send any publicId, so the
+    // run's ids and who played stay out of the answer, a replayed one included.
     return {
       publicId: session.publicId,
       position,

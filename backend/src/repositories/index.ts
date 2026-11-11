@@ -9,3 +9,4 @@ export * from "./passkeys.repo";
 export * from "./auth-challenges.repo";
 export * from "./kiosk-alerts.repo";
 export * from "./access-requests.repo";
+export * from "./kiosk-pairing-codes.repo";

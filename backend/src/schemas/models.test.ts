@@ -19,10 +19,14 @@ const kioskPayload = (overrides: Record<string, unknown> = {}) => ({
 });
 
 describe("createCprSessionSchema", () => {
-  it("accepts what the kiosk sends", () => {
-    expect(createCprSessionSchema.parse(kioskPayload())).toEqual(
-      kioskPayload(),
-    );
+  it("accepts what the kiosk sends, dropping the kiosk and location it names", () => {
+    const {
+      kioskId: _kioskId,
+      locationId: _locationId,
+      ...owned
+    } = kioskPayload();
+
+    expect(createCprSessionSchema.parse(kioskPayload())).toEqual(owned);
   });
 
   it("accepts a run without registration, kiosk or build", () => {
@@ -55,8 +59,6 @@ describe("createCprSessionSchema", () => {
     expect(Object.keys(parsed).sort()).toEqual([
       "buildId",
       "compressions",
-      "kioskId",
-      "locationId",
       "publicId",
       "registrationId",
     ]);
@@ -119,11 +121,19 @@ describe("createCprSessionSchema", () => {
     ).toBe(false);
   });
 
-  it.each(["publicId", "locationId"])("requires %s", (field) => {
+  it("requires publicId", () => {
     expect(
-      createCprSessionSchema.safeParse(kioskPayload({ [field]: undefined }))
+      createCprSessionSchema.safeParse(kioskPayload({ publicId: undefined }))
         .success,
     ).toBe(false);
+  });
+
+  it("accepts a run from a newer kiosk that sends no kiosk or location", () => {
+    expect(
+      createCprSessionSchema.safeParse(
+        kioskPayload({ kioskId: undefined, locationId: undefined }),
+      ).success,
+    ).toBe(true);
   });
 
   it("rejects ids longer than their columns", () => {

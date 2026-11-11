@@ -1,8 +1,17 @@
-import { differenceInMilliseconds } from "date-fns";
+import { randomBytes } from "node:crypto";
+import { differenceInMilliseconds, isFuture } from "date-fns";
 
-import { BadRequestError } from "@/exceptions";
-import { KiosksRepository, LocationsRepository } from "@/repositories";
-import { KioskHeartbeat } from "@/schemas";
+import { BadRequestError, ConflictError } from "@/exceptions";
+import {
+  KioskPairingCodesRepository,
+  KiosksRepository,
+  LocationsRepository,
+} from "@/repositories";
+import { KioskHeartbeat, KioskPair } from "@/schemas";
+import { AuthenticatedKiosk } from "@/types";
+import { hashToken, normalizePairingCode } from "@/utils";
+
+import { db } from "../db";
 
 /**
  * A kiosk heartbeats every couple of minutes, so two consecutive misses is a
@@ -26,7 +35,17 @@ export const KIOSK_MAINTENANCE_STATUS = "maintenance";
  */
 const KIOSK_MAINTENANCE_MAX_MS = 20 * 60 * 1000;
 
-type KioskRow = Awaited<ReturnType<typeof KiosksRepository.list>>[number];
+/** 32 random bytes is 256 bits: not guessable, and 43 URL-safe characters. */
+const KIOSK_TOKEN_BYTES = 32;
+
+/** One answer for unknown, used and expired codes, so none can be told apart. */
+const invalidPairingCodeError = () =>
+  new BadRequestError("This pairing code is invalid or has expired.");
+
+type KioskRow = Omit<
+  Awaited<ReturnType<typeof KiosksRepository.list>>[number],
+  "tokenHash"
+>;
 
 /**
  * What the board and the health check both read off a stored kiosk, derived in
@@ -59,29 +78,88 @@ export const withKioskStatus = (kiosk: KioskRow, now: Date) => {
 
 export const KiosksLogic = {
   /**
-   * A known location is the price of admission: the kiosk mints its own id, so
-   * without this every browser that opened the app became a kiosk.
+   * Spends a one-time code from the portal and gives the booth the token it
+   * reports with from then on. The token is returned once and only its hash is
+   * stored. The code's row is locked and spent in the same transaction that
+   * pairs the kiosk, so a code pairs exactly one booth.
    */
-  heartbeat: async (kioskId: string, data: KioskHeartbeat) => {
-    if (!data.locationId) {
-      throw new BadRequestError(
-        "A kiosk must be set up with a location before it can report.",
-      );
-    }
+  pair: async ({ code, kioskId }: KioskPair) => {
+    const codeHash = hashToken(normalizePairingCode(code));
+    const token = randomBytes(KIOSK_TOKEN_BYTES).toString("base64url");
 
-    const location = await LocationsRepository.get(data.locationId);
+    const location = await db.transaction(async (tx) => {
+      const pairingCode = await KioskPairingCodesRepository.getForUpdate(
+        codeHash,
+        tx,
+      );
+
+      if (
+        !pairingCode ||
+        pairingCode.usedAt ||
+        !isFuture(pairingCode.expiresAt) ||
+        !(await KioskPairingCodesRepository.markUsed(pairingCode.id, tx))
+      ) {
+        return undefined;
+      }
+
+      await KiosksRepository.pair(
+        {
+          kioskId,
+          locationId: pairingCode.locationId,
+          tokenHash: hashToken(token),
+        },
+        tx,
+      );
+
+      return await LocationsRepository.get(pairingCode.locationId, tx);
+    });
 
     if (!location) {
-      throw new BadRequestError("Unknown location. Set this kiosk up again.");
+      throw invalidPairingCodeError();
     }
+
+    return {
+      token,
+      location: { id: location.id, name: location.name, city: location.city },
+    };
+  },
+
+  /**
+   * Heartbeats never create a kiosk: only pairing does, and the location is
+   * the one it paired with. The booth may have paired under its browser's own
+   * id before its board reported the id stored on the board; the first
+   * heartbeat under the board's id moves the row over, unless another kiosk
+   * already has that id. Returns the id the kiosk is stored under.
+   */
+  heartbeat: async (
+    kiosk: AuthenticatedKiosk,
+    reportedKioskId: string,
+    data: KioskHeartbeat,
+  ) => {
+    // MySQL compares ids case-insensitively, so a change of case is no move.
+    const isSameId =
+      reportedKioskId.toLowerCase() === kiosk.kioskId.toLowerCase();
+
+    if (
+      !isSameId &&
+      !(await KiosksRepository.rekey(kiosk.kioskId, reportedKioskId))
+    ) {
+      throw new ConflictError({
+        message: "Another kiosk already uses this id. Pair this kiosk again.",
+      });
+    }
+
+    const kioskId = isSameId ? kiosk.kioskId : reportedKioskId;
 
     // An omitted status is stored as unknown, never left as it was: otherwise a
     // heartbeat without one would keep a stored "maintenance" alive forever
     // while refreshing the last-seen time the 20-minute cap is measured from.
-    await KiosksRepository.upsert(kioskId, {
+    await KiosksRepository.recordHeartbeat(kioskId, {
       ...data,
       serialStatus: data.serialStatus ?? null,
     });
+
+    return kioskId;
   },
 
   /**
@@ -101,7 +179,7 @@ export const KiosksLogic = {
           !locationIds ||
           (kiosk.locationId !== null && locationIds.includes(kiosk.locationId)),
       )
-      .map((kiosk) => {
+      .map(({ tokenHash: _tokenHash, ...kiosk }) => {
         const stats = sessionStatsByKiosk.get(kiosk.kioskId);
 
         return {

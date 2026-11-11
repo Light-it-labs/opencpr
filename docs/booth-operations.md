@@ -8,7 +8,7 @@ What to do before the first day, what visitors see, what the booth does on its o
 
 ## Before the first day
 
-**Create the location.** Do this before setting up the booth computer: the kiosk cannot leave its setup screen without a location. In the admin portal, under Locations, create the venue with its name, country, city, address, start date and, if the booth is temporary, an end date, plus its IANA timezone and, if it closes at night, opening hours (`opensAt`, `closesAt`). The timezone decides what "today" means for a run's rank and the statistics; the dates and hours decide when a silent kiosk counts as a problem. Leave `alertsEnabled` off for a test or demo venue. The kiosk's setup screen lists only locations that are enabled and whose end date has not passed, so a location created a week early shows up at once.
+**Create the location.** Do this before setting up the booth computer: the kiosk cannot leave its setup screen until it is paired with a location. In the admin portal, under Locations, create the venue with its name, country, city, address, start date and, if the booth is temporary, an end date, plus its IANA timezone and, if it closes at night, opening hours (`opensAt`, `closesAt`). The timezone decides what "today" means for a run's rank and the statistics; the dates and hours decide when a silent kiosk counts as a problem. Leave `alertsEnabled` off for a test or demo venue. A booth can only be paired with a location that is enabled and whose end date has not passed, so a location created a week early can be paired at once.
 
 <p align="center">
   <img src="images/screenshots/admin/locations.jpg" alt="Locations page of the admin portal" width="49%">
@@ -17,7 +17,9 @@ What to do before the first day, what visitors see, what the booth does on its o
 
 **Set up the booth computer.** Follow the [booth computer guide](../scripts/booth/README.md) for your platform. Its installer puts in place the Chrome serial policy and, on Ubuntu, the udev rule, so a board replaced or plugged back in during the day reconnects on its own.
 
-**First run, with a keyboard.** After the reboot the computer logs in and the kiosk opens on `/setup`. Pick the language, the location and Arduino mode, and grant the serial port if Chrome asks (with the policy in place it does not). The grant lives in the kiosk's Chrome profile. Wait for the home screen, check that the booth appears under Kiosks in the admin portal with status `reading`, do one run yourself to the clicker, and then remove the keyboard. Calibrate the sensor for your manikin first if you have not: see [Build the sensor](hardware.md#calibrating-for-your-manikin).
+**First run, with a keyboard.** After the reboot the computer logs in and the kiosk opens on `/setup`. In the admin portal, under Kiosks, create a pairing code for the location (it needs the `admin` role, is valid for 15 minutes and works once). On the kiosk, pick the language, type the code and pick Arduino mode, and grant the serial port if Chrome asks (with the policy in place it does not). The grant lives in the kiosk's Chrome profile. Wait for the home screen, check that the booth appears under Kiosks in the admin portal with status `reading`, do one run yourself to the clicker, and then remove the keyboard. Calibrate the sensor for your manikin first if you have not: see [Build the sensor](hardware.md#calibrating-for-your-manikin).
+
+**Upgrading a booth set up before pairing.** From the release that adds pairing, the API refuses heartbeats and runs from a kiosk that has not been paired. Deploy the API (and run `pnpm db:migrate`), then pair every booth with a code from the portal before or right after its kiosk updates. A kiosk keeps its unsent runs until it is paired and sends them then.
 
 ## Daily operation
 
@@ -92,7 +94,8 @@ On Ubuntu, `update-firmware.sh` uses it: it compiles first, then switches the ki
 | Screen blanks or locks | System settings lost, or the monitor's own power saving | On Ubuntu, re-run `install-booth.sh`, which reapplies the GNOME settings. On macOS, check Displays, Advanced, prevent sleeping on power adapter. Turn off power saving in the monitor's menu |
 | Kiosk does not come up after boot | On Ubuntu, the service failed or the user session does not linger. On macOS, automatic login or the Login Item is missing | On macOS, check automatic login and that `start-kiosk.command` is a Login Item. On Ubuntu, `journalctl --user -u opencpr-kiosk` shows why. `systemctl --user status opencpr-kiosk` is `inactive` until the graphical session is up; if `loginctl show-user kiosk -p Linger` is not `yes`, run `sudo loginctl enable-linger kiosk` |
 | Kiosk stuck on a wrong screen | A run or an update left Chrome somewhere odd | On Ubuntu, `systemctl --user restart opencpr-kiosk` over ssh or on Ctrl+Alt+F3; on macOS, restart the kiosk with `start-kiosk.command`. Or power-cycle the booth |
-| Booth missing from the admin portal | No internet, setup not completed, or a new board | The kiosk only reports once `/setup` has a location; check the network; a new board is a new kiosk ID, so it appears as a new row |
+| Booth missing from the admin portal | No internet, setup not completed, or a new board | The kiosk only reports once it is paired on `/setup`; check the network; a new board is a new kiosk ID, so it appears as a new row |
+| Kiosk asks to be paired again | Its pairing was revoked in the portal, or it was set up before pairing existed | Create a new code under Kiosks in the admin portal and type it on `/setup`. Runs finished meanwhile wait in the kiosk and are sent once it is paired |
 | Results email never arrives | No registration linked, SMTP settings or sender wrong, or the run is still in the outbox | Check the session under Sessions in the portal: a participant must be linked; check the `SMTP_*` settings and `EMAIL_FROM_ADDRESS` on the API; a run that has not reached the API yet has no email |
 | Alert fired outside opening hours | The location has no hours set, so it is monitored 24/7 | Set `opensAt` and `closesAt` on the location, with the right timezone |
 
@@ -115,7 +118,7 @@ When a temporary booth closes:
 
 1. **Export what you need.** Under Participants in the admin portal, export the CSV, filtered by location and dates. The export needs the `admin` role.
 2. **Delete what you should not keep.** OpenCPR has no automatic retention or deletion: participant data stays until an admin deletes it. The admin portal deletes participants one at a time, and each deletion removes their runs, compressions and registrations. Decide what to keep from your privacy policy.
-3. **Decide on the location.** Keep it for its history, or rename it so it reads as a past event. Once its end date has passed, the kiosk setup screen no longer lists it and its booth is no longer checked for alerts.
+3. **Decide on the location.** Keep it for its history, or rename it so it reads as a past event. Once its end date has passed, no booth can be paired with it and its booth is no longer checked for alerts.
 4. **Take the sensor out of a borrowed manikin.** Remove the sensor, its mount, the cable and any putty or tape, so the manikin goes back unmarked. In another manikin, [calibrate](hardware.md#calibrating-for-your-manikin) again.
 5. **Back up the database.** See [Backups](hosting.md#backups).
 

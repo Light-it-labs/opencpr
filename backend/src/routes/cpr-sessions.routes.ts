@@ -1,11 +1,15 @@
 import { Router } from "express";
 
 import { CprSessionsController } from "@/controllers";
-import { tryCatchWrapper } from "@/middlewares";
+import { kioskAuth, tryCatchWrapper } from "@/middlewares";
 
 export const CprSessionsRouter = Router();
 
-CprSessionsRouter.post("/", tryCatchWrapper(CprSessionsController.create));
+CprSessionsRouter.post(
+  "/",
+  kioskAuth(),
+  tryCatchWrapper(CprSessionsController.create),
+);
 
 // Declared before /:id so "claim" is never parsed as a numeric id.
 CprSessionsRouter.get(

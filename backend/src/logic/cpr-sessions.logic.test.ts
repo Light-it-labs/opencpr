@@ -6,7 +6,12 @@ import {
   LocationsRepository,
   ParticipantsRepository,
 } from "@/repositories";
-import { CprSession, CreateCprSession, Participant } from "@/schemas";
+import {
+  CprSession,
+  CreateCprSession,
+  createCprSessionSchema,
+  Participant,
+} from "@/schemas";
 import { EmailService } from "@/services";
 
 import { CprSessionsLogic } from "./cpr-sessions.logic";
@@ -60,11 +65,11 @@ const participant = {
   deletedAt: null,
 } satisfies Participant;
 
+const kiosk = { kioskId: "kiosk-0001", locationId: location.id };
+
 const payload: CreateCprSession = {
   publicId: "run-0002",
   registrationId: "registration-0001",
-  locationId: location.id,
-  kioskId: "kiosk-0001",
   buildId: "abc1234",
   compressions: [],
 };
@@ -128,11 +133,32 @@ afterEach(() => {
   vi.resetAllMocks();
 });
 
+describe("CprSessionsLogic.create attribution", () => {
+  it("files the run under the paired kiosk and its location, not the payload's", async () => {
+    givenStoredRun(true);
+    const spoofed = createCprSessionSchema.parse({
+      ...payload,
+      kioskId: "kiosk-9999",
+      locationId: "location-9999",
+    });
+
+    await CprSessionsLogic.create(spoofed, kiosk);
+
+    expect(LocationsRepository.get).toHaveBeenCalledWith(location.id);
+    expect(CprSessionsRepository.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        kioskId: kiosk.kioskId,
+        locationId: kiosk.locationId,
+      }),
+    );
+  });
+});
+
 describe("CprSessionsLogic.create results email", () => {
   it("emails the first run of a claimed registration", async () => {
     givenStoredRun(true);
 
-    await CprSessionsLogic.create(payload);
+    await CprSessionsLogic.create(payload, kiosk);
 
     expect(
       CprSessionsRepository.linkParticipantByRegistration,
@@ -150,7 +176,7 @@ describe("CprSessionsLogic.create results email", () => {
     givenStoredRun(true);
     givenEmailedLastAt(subSeconds(NOW, 20));
 
-    const result = await CprSessionsLogic.create(payload);
+    const result = await CprSessionsLogic.create(payload, kiosk);
 
     expect(result.publicId).toBe(payload.publicId);
     expect(
@@ -163,7 +189,7 @@ describe("CprSessionsLogic.create results email", () => {
     givenStoredRun(true);
     givenEmailedLastAt(subSeconds(NOW, 45));
 
-    await CprSessionsLogic.create(payload);
+    await CprSessionsLogic.create(payload, kiosk);
 
     expect(EmailService.sendResults).toHaveBeenCalledOnce();
   });
@@ -172,7 +198,7 @@ describe("CprSessionsLogic.create results email", () => {
     givenStoredRun(true);
     givenClaim(subHours(NOW, 2.5));
 
-    const result = await CprSessionsLogic.create(payload);
+    const result = await CprSessionsLogic.create(payload, kiosk);
 
     expect(result.publicId).toBe(payload.publicId);
     expect(
@@ -185,7 +211,7 @@ describe("CprSessionsLogic.create results email", () => {
   it("does not email a kiosk retrying a publicId it already saved", async () => {
     givenStoredRun(false, { participantId: participant.id });
 
-    await CprSessionsLogic.create(payload);
+    await CprSessionsLogic.create(payload, kiosk);
 
     expect(
       CprSessionsRepository.linkParticipantByRegistration,

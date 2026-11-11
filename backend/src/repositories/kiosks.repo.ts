@@ -2,20 +2,92 @@ import { and, count, desc, eq, isNotNull, isNull, max } from "drizzle-orm";
 
 import { KioskHeartbeat } from "@/schemas";
 
-import { cprSessions, db, kiosks, type DbExecutor } from "../db";
+import { cprSessions, db, kioskAlerts, kiosks, type DbExecutor } from "../db";
 
 export const KiosksRepository = {
-  /** One row per kiosk, overwritten each heartbeat: a status board, not history. */
-  upsert: async (kioskId: string, data: KioskHeartbeat) => {
-    const values = { ...data, kioskId };
+  /**
+   * Creates the kiosk or takes over its row, replacing any earlier token, so
+   * pairing a booth again cuts off whatever held its previous token. deletedAt
+   * is cleared so a retired booth returns once it is paired again.
+   */
+  pair: async (
+    {
+      kioskId,
+      locationId,
+      tokenHash,
+    }: { kioskId: string; locationId: string; tokenHash: string },
+    executor: DbExecutor = db,
+  ) => {
+    const now = new Date();
+    const pairing = { locationId, tokenHash, pairedAt: now };
 
-    await db
+    await executor
       .insert(kiosks)
-      .values(values)
-      // deletedAt is cleared so a retired booth returns once it reports again.
+      .values({ kioskId, ...pairing })
       .onDuplicateKeyUpdate({
-        set: { ...data, deletedAt: null, updatedAt: new Date() },
+        set: { ...pairing, deletedAt: null, updatedAt: now },
       });
+  },
+
+  getByTokenHash: async (tokenHash: string) =>
+    await db.query.kiosks.findFirst({
+      where: and(eq(kiosks.tokenHash, tokenHash), isNull(kiosks.deletedAt)),
+    }),
+
+  /** One row per kiosk, overwritten each heartbeat: a status board, not history. */
+  recordHeartbeat: async (kioskId: string, data: KioskHeartbeat) => {
+    await db
+      .update(kiosks)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(kiosks.kioskId, kioskId));
+  },
+
+  /**
+   * Moves a kiosk, its alert state and its runs to a new id. False, with
+   * nothing moved, when any kiosk row (a retired one included) already has the
+   * new id. An alert state left behind by no kiosk is dropped first, since it
+   * would otherwise block the move.
+   */
+  rekey: async (fromKioskId: string, toKioskId: string) =>
+    await db.transaction(async (tx) => {
+      const [taken] = await tx
+        .select({ kioskId: kiosks.kioskId })
+        .from(kiosks)
+        .where(eq(kiosks.kioskId, toKioskId))
+        .for("update");
+
+      if (taken) {
+        return false;
+      }
+
+      await tx.delete(kioskAlerts).where(eq(kioskAlerts.kioskId, toKioskId));
+      await tx
+        .update(kiosks)
+        .set({ kioskId: toKioskId })
+        .where(eq(kiosks.kioskId, fromKioskId));
+      await tx
+        .update(kioskAlerts)
+        .set({ kioskId: toKioskId })
+        .where(eq(kioskAlerts.kioskId, fromKioskId));
+      await tx
+        .update(cprSessions)
+        .set({ kioskId: toKioskId })
+        .where(eq(cprSessions.kioskId, fromKioskId));
+
+      return true;
+    }),
+
+  /**
+   * Leaves updatedAt alone: it is the kiosk's last-seen time, and revoking says
+   * nothing about whether the booth is up.
+   */
+  revokePairing: async (kioskId: string) => {
+    const [result] = await db
+      .update(kiosks)
+      .set({ tokenHash: null, pairedAt: null })
+      .where(and(eq(kiosks.kioskId, kioskId), isNull(kiosks.deletedAt)));
+
+    return result.affectedRows > 0;
   },
 
   list: async () =>

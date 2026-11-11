@@ -3,16 +3,31 @@ import { Request, Response } from "express";
 import { StatusCodes } from "@/config";
 import { KioskHealthLogic, KiosksLogic } from "@/logic";
 import { scopeLocationIds } from "@/logic/admin";
-import { getUser } from "@/middlewares";
-import { kioskHeartbeatSchema, kioskIdParamSchema } from "@/schemas";
-import { AuthenticatedRequest } from "@/types";
+import { getKiosk, getUser } from "@/middlewares";
+import {
+  kioskHeartbeatSchema,
+  kioskIdParamSchema,
+  kioskPairSchema,
+} from "@/schemas";
+import { AuthenticatedRequest, KioskRequest } from "@/types";
 
 export const KiosksController = {
-  heartbeat: async (req: Request, res: Response) => {
-    const { kioskId } = kioskIdParamSchema.parse(req.params);
+  pair: async (req: Request, res: Response) => {
+    const validatedData = kioskPairSchema.parse(req.body);
+
+    const data = await KiosksLogic.pair(validatedData);
+    res.status(StatusCodes.OK).json({ data });
+  },
+
+  heartbeat: async (req: KioskRequest, res: Response) => {
+    const { kioskId: reportedKioskId } = kioskIdParamSchema.parse(req.params);
     const validatedData = kioskHeartbeatSchema.parse(req.body);
 
-    await KiosksLogic.heartbeat(kioskId, validatedData);
+    const kioskId = await KiosksLogic.heartbeat(
+      getKiosk(req),
+      reportedKioskId,
+      validatedData,
+    );
     // Never fails the heartbeat: the check logs its own errors.
     await KioskHealthLogic.checkKiosk(kioskId);
     res.status(StatusCodes.OK).json({ data: { received: true } });

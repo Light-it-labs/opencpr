@@ -15,6 +15,13 @@
       "when": 1794414449960,
       "tag": "0001_participant_results_emailed_at",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1794416835320,
+      "tag": "0002_kiosk_pairing",
+      "breakpoints": true
     }
   ]
 }

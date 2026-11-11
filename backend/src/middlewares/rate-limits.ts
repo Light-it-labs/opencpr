@@ -46,3 +46,18 @@ export const generalRateLimit = rateLimit({
     error: "Too many requests from this IP, please try again after a minute",
   },
 });
+
+/**
+ * On top of the global limit, for unauthenticated endpoints that send email or
+ * are guessing targets: each gets its own, tighter, budget.
+ */
+export const perMinuteRateLimit = (limit: number) =>
+  rateLimit({
+    windowMs: milliseconds({ minutes: 1 }),
+    limit,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {
+      error: "Too many requests from this IP, please try again after a minute",
+    },
+  });
