@@ -13,7 +13,7 @@ Built with React 19, Vite, TanStack Router, TanStack Query, TanStack Table, Reac
 | `/login` | Sign in with a magic link sent by email, or with a passkey |
 | `/secure-access` | Shown after a magic-link sign-in to a user with no passkey yet: offers to add one on this device |
 | `/` | Dashboard: sessions, participants, average score and kiosks online for a date range and location, with sessions-per-day, score-per-day and per-location charts |
-| `/kiosks` | Admins only. Fleet status, sensor state and last heartbeat of each kiosk |
+| `/kiosks` | Admins only. Fleet status, pairing, sensor state and last heartbeat of each kiosk. Create a one-time pairing code for a location to pair a kiosk, and revoke a kiosk's pairing |
 | `/sessions` | Filterable list of sessions; `/sessions/$sessionId` shows one session with its compression chart |
 | `/locations` | Create, edit and disable locations |
 | `/participants` | The people who used a booth. Admins can export them as CSV and delete them one at a time |

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { z } from "zod";
 
@@ -12,6 +12,7 @@ import { Icons } from "@/components/ui/icons";
 import { queryClient } from "@/config/query-client";
 import { meQuery } from "@/services/auth";
 import {
+  type Kiosk,
   KIOSK_SENSOR_FILTER,
   KIOSK_STATUS_FILTER,
   KIOSKS_REFETCH_INTERVAL,
@@ -22,9 +23,14 @@ import {
 import { useAdminLocations } from "@/services/locations";
 import { USER_ROLES } from "@/services/users";
 import { KiosksFilters } from "./-components/kiosks-filters";
+import { PairKioskDialog } from "./-components/pair-kiosk-dialog";
+import { RevokeKioskPairingDialog } from "./-components/revoke-kiosk-pairing-dialog";
 import { useKiosksTable } from "./-hooks/use-kiosks-table";
 
 const KiosksPage = () => {
+  const [isPairOpen, setIsPairOpen] = useState(false);
+  const [revokingKiosk, setRevokingKiosk] = useState<Kiosk>();
+
   const {
     data: kiosks,
     isError,
@@ -64,7 +70,11 @@ const KiosksPage = () => {
     });
   }, [kiosks, locationId, sensor, status]);
 
-  const table = useKiosksTable({ data: filteredKiosks, locationNames });
+  const table = useKiosksTable({
+    data: filteredKiosks,
+    locationNames,
+    onRevokePairing: setRevokingKiosk,
+  });
 
   const hasActiveFilters = Boolean(locationId || sensor || status);
 
@@ -74,6 +84,20 @@ const KiosksPage = () => {
 
   return (
     <LayoutWrapper>
+      <PairKioskDialog
+        open={isPairOpen}
+        onClose={() => {
+          return setIsPairOpen(false);
+        }}
+      />
+
+      <RevokeKioskPairingDialog
+        kiosk={revokingKiosk}
+        onClose={() => {
+          return setRevokingKiosk(undefined);
+        }}
+      />
+
       <Header.Root>
         <Breadcrumbs pages={[{ name: "Kiosks" }]} />
 
@@ -88,14 +112,25 @@ const KiosksPage = () => {
             ) : null}
           </div>
 
-          <Button
-            aria-label="Refresh kiosks"
-            PrefixIcon={<Icons.RefreshCw className={isFetching ? "animate-spin" : undefined} />}
-            variant="outlined"
-            onClick={() => {
-              return refetch();
-            }}
-          />
+          <div className="flex items-center gap-2">
+            <Button
+              aria-label="Refresh kiosks"
+              PrefixIcon={<Icons.RefreshCw className={isFetching ? "animate-spin" : undefined} />}
+              variant="outlined"
+              onClick={() => {
+                return refetch();
+              }}
+            />
+
+            <Button
+              onClick={() => {
+                return setIsPairOpen(true);
+              }}
+            >
+              <Icons.Plus />
+              Pair a kiosk
+            </Button>
+          </div>
         </Header.Content>
       </Header.Root>
 

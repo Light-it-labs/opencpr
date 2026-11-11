@@ -5,6 +5,7 @@ import { RelativeTime } from "@/components/relative-time";
 import { Badge } from "@/components/ui/badge";
 import { type TableFeatureSet, useTable, type UseTableProps } from "@/components/ui/table";
 import { type Kiosk, SERIAL_STATUS_LABEL } from "@/services/kiosks";
+import { KioskRowActions } from "../-components/kiosk-row-actions";
 
 const SHORT_BUILD_LENGTH = 7;
 
@@ -12,9 +13,15 @@ const DEFAULT_SORTING: SortingState = [{ id: "lastSeen", desc: true }];
 
 type UseKiosksTableProps = Omit<UseTableProps<Kiosk>, "columns"> & {
   locationNames: Map<string, string>;
+  onRevokePairing: (kiosk: Kiosk) => void;
 };
 
-export const useKiosksTable = ({ data = [], locationNames, ...props }: UseKiosksTableProps) => {
+export const useKiosksTable = ({
+  data = [],
+  locationNames,
+  onRevokePairing,
+  ...props
+}: UseKiosksTableProps) => {
   const columns = useMemo(() => {
     const columnHelper = createColumnHelper<TableFeatureSet, Kiosk>();
 
@@ -40,6 +47,38 @@ export const useKiosksTable = ({ data = [], locationNames, ...props }: UseKiosks
             const name = locationNames.get(locationId);
 
             return name ?? <span className="text-text-default-tertiary">{locationId}</span>;
+          },
+        },
+      ),
+      columnHelper.accessor(
+        (kiosk) => {
+          return kiosk.pairedAt ?? undefined;
+        },
+        {
+          id: "pairing",
+          meta: { stringifiedHeader: "Pairing" },
+          header: "Pairing",
+          sortUndefined: "last",
+          cell: ({ row }) => {
+            const { pairedAt } = row.original;
+
+            if (!pairedAt) {
+              return (
+                <Badge size="sm" variant="warning">
+                  Not paired
+                </Badge>
+              );
+            }
+
+            return (
+              <span className="flex items-center gap-2">
+                <Badge size="sm" variant="outline">
+                  Paired
+                </Badge>
+
+                <RelativeTime date={pairedAt} />
+              </span>
+            );
           },
         },
       ),
@@ -165,8 +204,16 @@ export const useKiosksTable = ({ data = [], locationNames, ...props }: UseKiosks
         meta: { stringifiedHeader: "Completions" },
         header: "Completions",
       }),
+      columnHelper.display({
+        id: "actions",
+        enableHiding: false,
+        enableSorting: false,
+        cell: ({ row }) => {
+          return <KioskRowActions kiosk={row.original} onRevokePairing={onRevokePairing} />;
+        },
+      }),
     ]);
-  }, [locationNames]);
+  }, [locationNames, onRevokePairing]);
 
   return useTable({ columns, data, initialState: { sorting: DEFAULT_SORTING }, ...props });
 };

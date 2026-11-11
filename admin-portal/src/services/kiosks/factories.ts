@@ -1,6 +1,6 @@
 import { createQueryKeys } from "@lukemorales/query-key-factory";
 
-import { getKiosks } from "./api";
+import { createKioskPairingCode, getKiosks, revokeKioskPairing } from "./api";
 
 export const queries = createQueryKeys("kiosks", {
   list: {
@@ -10,3 +10,5 @@ export const queries = createQueryKeys("kiosks", {
     },
   },
 });
+
+export const mutations = { createKioskPairingCode, revokeKioskPairing };

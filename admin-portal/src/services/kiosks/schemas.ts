@@ -14,6 +14,18 @@ export const kioskSchema = z.object({
   lastVisitAt: z.iso.datetime().nullable(),
   online: z.boolean(),
   serialStale: z.boolean(),
+  pairedAt: z.iso.datetime().nullable(),
 });
 
 export const kiosksResponseSchema = z.object({ data: z.array(kioskSchema) });
+
+export const kioskPairingCodeSchema = z.object({
+  code: z.string(),
+  expiresAt: z.iso.datetime(),
+});
+
+export const kioskPairingCodeResponseSchema = z.object({ data: kioskPairingCodeSchema });
+
+export const createKioskPairingCodePayloadSchema = z.object({
+  locationId: z.string().min(1, "Choose a location"),
+});
