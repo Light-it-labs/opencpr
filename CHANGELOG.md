@@ -13,6 +13,7 @@ All notable changes to OpenCPR are listed here. The format follows [Keep a Chang
 ### Security
 
 - Saving a run now ignores any field the server owns (row id, timestamps, scores), caps a run at 60 compressions with bounded timing and depth values, and limits API request bodies to 16 kB.
+- The admin performance statistics group a person's runs in linear time, so a flood of runs under one registration can no longer stall the API when someone opens them.
 
 ## [1.0.1] - 2026-11-05
 
