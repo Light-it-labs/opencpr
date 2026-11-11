@@ -165,7 +165,10 @@ const groupAttempts = (sessions: PerformanceSession[]) => {
         ? `registration:${session.registrationId}`
         : `session:${session.id}`;
 
-    groups.set(key, [...(groups.get(key) ?? []), session]);
+    const attempts = groups.get(key);
+
+    if (attempts) attempts.push(session);
+    else groups.set(key, [session]);
   });
 
   return [...groups.values()];
