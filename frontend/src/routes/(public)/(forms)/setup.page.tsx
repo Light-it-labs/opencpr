@@ -7,7 +7,7 @@ import { HttpStatusCode, isAxiosError } from "axios";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { Button, Input, Label, RadioGroup } from "@/components/ui";
+import { Button, Input, Label, RadioGroup, Select } from "@/components/ui";
 import { DEFAULT_LANGUAGE, LANGUAGES } from "@/i18n";
 import { normalizePairingCode, PAIRING_CODE_LENGTH, usePairKiosk } from "@/services/kiosks";
 import {
@@ -171,24 +171,27 @@ const RouteComponent = () => {
           name="language"
           render={({ field }) => {
             return (
-              <RadioGroup.Root
+              <Select.Root
                 onValueChange={(language) => {
                   field.onChange(language);
                   void i18n.changeLanguage(language);
                 }}
                 value={field.value}
               >
-                {Object.values(LANGUAGES).map((language) => {
-                  return (
-                    <div className="flex items-center space-x-2" key={language}>
-                      <RadioGroup.Item id={`language-${language}`} value={language} />
-                      <Label className="font-normal" htmlFor={`language-${language}`}>
+                <Select.Trigger className="w-full">
+                  <Select.Value />
+                </Select.Trigger>
+
+                <Select.Content>
+                  {Object.values(LANGUAGES).map((language) => {
+                    return (
+                      <Select.Item key={language} value={language}>
                         {t(`setup.language.${language}`)}
-                      </Label>
-                    </div>
-                  );
-                })}
-              </RadioGroup.Root>
+                      </Select.Item>
+                    );
+                  })}
+                </Select.Content>
+              </Select.Root>
             );
           }}
         />
