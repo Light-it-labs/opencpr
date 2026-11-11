@@ -115,7 +115,7 @@ api.example.org {
 }
 ```
 
-Then `sudo systemctl reload caddy`. Do not put a second proxy (a CDN in proxy mode, a load balancer) in front of Caddy: the API trusts exactly one hop.
+Then `sudo systemctl reload caddy`. Do not put a second proxy (a CDN in proxy mode, a load balancer) in front of Caddy: the API trusts exactly one hop. Run a single API process, as the Docker image does: rate limits are counted in each process's memory, so several processes behind one address would multiply every limit.
 
 ### 5. Start it
 
