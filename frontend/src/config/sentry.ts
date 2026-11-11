@@ -40,10 +40,6 @@ export const initializeSentry = () => {
     return;
   }
 
-  // The participant's phone opens /r/<registration id> straight from the QR,
-  // and every replay snapshot stores the raw page address, so replays
-  // are recorded on the kiosk only. Anything tagged data-sentry-mask is
-  // redacted, and inputs are masked as a second line of defense.
   const replay = recordsReplay(window.location.pathname)
     ? [
         Sentry.replayIntegration({
