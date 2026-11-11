@@ -8,7 +8,7 @@ Built with React 19, Vite, TanStack Router, TanStack Query, React Hook Form + Zo
 
 | Route | What it does |
 | --- | --- |
-| `/setup` | Pick the location and the mode (Arduino or manual). In Arduino mode it asks Chrome for the serial port, or reuses one granted on an earlier run |
+| `/setup` | Pick the language (English or Spanish), the location and the mode (Arduino or manual). In Arduino mode it asks Chrome for the serial port, or reuses one granted on an earlier run |
 | `/` | Attract screen: the start button. Sends you to `/setup` when no serial port is available in Arduino mode |
 | `/register` | Shows a QR code; the participant registers on their phone and the kiosk moves on by itself |
 | `/r/$sessionId` | The phone-side registration form the QR code opens |

@@ -2,6 +2,8 @@ import z from "zod";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+import type { Language } from "@/i18n";
+
 // What the sensor measured, and nothing else. Rate, full-compression and
 // full-recoil are judgments against AHA guidelines and are derived in
 // session-scoring, so firmware and app cannot hold different numbers.
@@ -53,6 +55,8 @@ const SERIAL_HEALTH_REFRESH_MS = 60_000;
 export type CprSessionStoreState = {
   /** Venue this kiosk is standing in. Chosen on /setup, persisted per browser. */
   locationId: string | null;
+  /** Language the kiosk speaks. Chosen on /setup, persisted per browser. */
+  language: Language | null;
   /**
    * Identifies this machine to the health endpoint. Generated once and kept,
    * because several kiosks can stand at one location.
@@ -108,6 +112,7 @@ const useCprSessionStore = create<CprSessionStoreState & CprSessionStoreActions>
       return {
         currentSession: null,
         locationId: null,
+        language: null,
         kioskId: null,
         lastSerialStatus: null,
         lastSerialOkAt: null,
@@ -138,6 +143,7 @@ const useCprSessionStore = create<CprSessionStoreState & CprSessionStoreActions>
         return {
           mode: state.mode,
           locationId: state.locationId,
+          language: state.language,
           kioskId: state.kioskId,
           lastBaselineMm: state.lastBaselineMm,
         };
@@ -152,7 +158,7 @@ const useCprSessionStore = create<CprSessionStoreState & CprSessionStoreActions>
 
         return state as Pick<
           CprSessionStoreState,
-          "mode" | "locationId" | "kioskId" | "lastBaselineMm"
+          "mode" | "locationId" | "language" | "kioskId" | "lastBaselineMm"
         >;
       },
     },
@@ -308,6 +314,22 @@ export const useLocationId = () => {
 export const setLocationId = (locationId: string | null) => {
   return useCprSessionStore.setState((state) => {
     return { ...state, locationId };
+  });
+};
+
+export const useLanguage = () => {
+  return useCprSessionStore((state) => {
+    return state.language;
+  });
+};
+
+export const getLanguage = () => {
+  return useCprSessionStore.getState().language;
+};
+
+export const setLanguage = (language: Language) => {
+  return useCprSessionStore.setState((state) => {
+    return { ...state, language };
   });
 };
 

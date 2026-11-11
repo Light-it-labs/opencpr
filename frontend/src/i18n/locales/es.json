@@ -1,0 +1,237 @@
+{
+  "common": {
+    "yes": "Sí",
+    "no": "No",
+    "close": "Cerrar",
+    "filter": "Filtrar",
+    "requestError": "No se pudo completar la solicitud. Probá de nuevo más tarde.",
+    "next": "Siguiente",
+    "back": "Volver"
+  },
+  "challenge": {
+    "results": {
+      "finish": "Finalizar",
+      "repeat": "Repetir",
+      "scorePercentage": "{value}%",
+      "metrics": {
+        "targetPrefix": "Objetivo: {target}",
+        "depthRange": "{min} a {max} cm",
+        "rateRange": "{min} a {max} por minuto",
+        "fullCompressions": {
+          "label": "Compresiones completas",
+          "why": "Por debajo de {minCm} cm el corazón no se comprime lo suficiente y la sangre no circula."
+        },
+        "fullRebounds": {
+          "label": "Rebotes completos",
+          "why": "Quedarse apoyado impide que el corazón se llene: bombea menos sangre y llega menos al cerebro. Es el error más frecuente."
+        },
+        "averageDepth": {
+          "label": "Profundidad promedio",
+          "why": "Menos de {minCm} cm no mueve suficiente sangre; más de {maxCm} cm aumenta el riesgo de fracturas."
+        },
+        "averageBpm": {
+          "label": "Ritmo promedio",
+          "why": "Por debajo de {min} la circulación no se sostiene; por encima de {max} el corazón no tiene tiempo de llenarse. Son unas 2 compresiones por segundo."
+        },
+        "outOf": "/ {total}",
+        "countTarget": "{total} de {total}",
+        "centimeters": "cm",
+        "perMinute": "por minuto"
+      },
+      "tips": {
+        "rateSlow": "Comprimí más seguido: {min} a {max} por minuto, unas 2 por segundo. Por debajo de eso, la sangre no llega al cerebro. Seguí el ritmo del metrónomo.",
+        "rateFast": "Bajá un poco el ritmo a {min}-{max} por minuto. Si vas más rápido, el corazón no llega a llenarse entre compresiones.",
+        "rateUnsteady": "Buscá un ritmo parejo de {min} a {max} por minuto. Acelerar y frenar corta el flujo de sangre; la constancia es lo que lo mantiene.",
+        "depthShallow": "Comprimí más profundo: de {minCm} a {maxCm} cm en cada compresión. Si no llegás, el corazón no se vacía. Brazos rectos, hombros sobre las manos, y dejá caer el peso del cuerpo en lugar de empujar con los brazos.",
+        "depthDeep": "Aflojá un poco: no pases de {maxCm} cm. Más profundo no bombea más sangre y aumenta el riesgo de lastimar las costillas.",
+        "depthInconsistent": "Varias compresiones quedaron cortas de {minCm} cm. Suele pasar sobre el final, cuando los brazos se cansan: mantené la profundidad hasta la última y, en una emergencia real, cambiá de rescatista cada 2 minutos.",
+        "recoil": "Dejá que el pecho vuelva del todo entre compresiones. Sin sacar las manos, soltá el peso por completo: si te quedás apoyado, el corazón no se llena y la siguiente compresión bombea casi en vacío."
+      },
+      "score": "Puntaje",
+      "previousScore": "Antes: {score}%",
+      "summary": {
+        "targetsMet": "{met} de {total} objetivos cumplidos",
+        "excellent": "Técnica impecable en las {total} compresiones. En una emergencia real, no pares hasta que llegue la ayuda.",
+        "good": "Muy buen intento. Corregí el punto que te marcamos abajo y llegás a una técnica impecable.",
+        "fair": "Buena base. Enfocate en los puntos que te marcamos abajo y vas a mejorar rápido.",
+        "keepPracticing": "Buen primer intento. Mirá los puntos que te marcamos abajo y probá otra vez: la técnica se aprende repitiendo."
+      },
+      "percentSign": "%",
+      "verdicts": {
+        "high": "¡LO LOGRASTE!",
+        "mid": "VAS POR BUEN CAMINO",
+        "low": "SEGUÍ PRACTICANDO"
+      },
+      "ranking": {
+        "place": "#{position} de {count} hoy",
+        "placeOnly": "#{position} hoy",
+        "percentile": "Estás en el {percentile}% de los mejores participantes",
+        "outOfToday": "de {count} personas hoy"
+      }
+    },
+    "title": "Seguí el <bold>pulso</bold> de la vida",
+    "title_secondary": "BUEN RITMO. SEGUÍ ASÍ",
+    "title_tertiary": "VAS MUY BIEN. CADA COMPRESIÓN CUENTA",
+    "instructions": {
+      "startsIn": "Empieza en...",
+      "pageTitle": "Aprendé <bold>RCP</bold> en minutos",
+      "pageSubtitle": "Esta es tu guía paso a paso para hacer <br/><bold>Reanimación Cardiopulmonar</bold> como un profesional.",
+      "challengeStarts": "El desafío de RCP está por empezar...",
+      "letsBegin": "¡Empecemos!",
+      "positioning": {
+        "title": "Posición de manos y cuerpo",
+        "step1": {
+          "title": "Manos en el corazón",
+          "description": "Colocá las manos en el centro del pecho, una sobre la otra, con los dedos entrelazados."
+        },
+        "step2": {
+          "title": "Codos trabados",
+          "description": "Mantené los brazos rectos y trabá los codos para usar el peso de la parte superior del cuerpo."
+        },
+        "step3": {
+          "title": "Usá el peso del cuerpo",
+          "description": "Dejá que el peso del cuerpo haga el trabajo: ¡no se trata de la fuerza de los brazos!"
+        }
+      },
+      "technique": {
+        "title": "Técnica de compresión",
+        "step1": {
+          "title": "Profundidad",
+          "description": "Presioná al menos 5 cm y no más de 6 cm en cada compresión."
+        },
+        "step2": {
+          "title": "Rebote",
+          "description": "Dejá que el pecho vuelva por completo después de cada compresión."
+        },
+        "step3": {
+          "title": "Ritmo",
+          "description": "Mantené un ritmo de 100-120 compresiones por minuto, unas 2 por segundo."
+        },
+        "step4": {
+          "title": "Ciclo",
+          "description": "30 compresiones y luego 2 respiraciones de rescate si estás capacitado."
+        }
+      },
+      "goals": {
+        "title": "Tus objetivos",
+        "compressions": "Completá un total de 30 compresiones",
+        "rhythm": "Mantené 100-120 compresiones por minuto, unas 2 por segundo. <br>Seguí el ritmo del metrónomo",
+        "depth": "Llegá a 5 cm de profundidad en cada compresión (vas a escuchar un 'clic')",
+        "recoil": "Dejá que el pecho vuelva por completo después de cada compresión"
+      },
+      "ready": "¿Listo para salvar una vida?",
+      "navigation": {
+        "next": "Siguiente",
+        "previous": "Anterior",
+        "startChallenge": "Empezar",
+        "step": "Paso {current} de {total}"
+      },
+      "handsOff": "NO TOQUES EL PECHO — calibrando el sensor"
+    },
+    "execution": {
+      "centimeters": "{value} cm",
+      "compressionsLeft": "Compresiones restantes",
+      "of_total": "de {total}",
+      "depthGauge": "Profundidad de compresión",
+      "rhythmGauge": "Ritmo",
+      "countingOnYou": "¡Tu paciente virtual cuenta con <bold>vos</bold>!",
+      "good_rhythm": "BUEN RITMO. SEGUÍ ASÍ.",
+      "keep_going": "VAS MUY BIEN. CADA COMPRESIÓN CUENTA",
+      "recalibrate": "Recalibrar"
+    },
+    "start": "Empezar",
+    "manualMode": "Modo manual: presioná la barra espaciadora para simular una nueva lectura.",
+    "feedback": {
+      "tooSlow": "¡Muy lento!",
+      "tooFast": "¡Muy rápido!",
+      "goodRhythm": "¡Buen ritmo!"
+    },
+    "messages": {
+      "connected": "¡Conectado!",
+      "connectionLost": "Conexión perdida",
+      "noPortRedirect": "El modo Arduino requiere un puerto serial. Redirigiendo a la configuración...",
+      "noSignal": "Sin señal del sensor — revisá la conexión",
+      "recalibrating": "Recalibrando — no toques el pecho",
+      "recalibrated": "Sensor recalibrado — base {mm} mm, compresiones reiniciadas",
+      "recalibrateFailed": "Recalibración rechazada — el pecho debe estar en reposo",
+      "sensorReady": "Sensor listo",
+      "sensorReadyDetail": "Sensor listo — base {mm} mm",
+      "idleWarning": "¿Seguís ahí? Reiniciando en {seconds}s — tocá o comprimí para continuar",
+      "calibrationFailed": "Calibración inestable — ¿hay algo apoyado en el pecho? Recalibrá antes de empezar."
+    }
+  },
+  "home": {
+    "title": "¿Estás listo para <bold>salvar una vida</bold> en",
+    "timeChallenge": "1 minuto",
+    "startChallenge": "Empezar desafío",
+    "30_seconds": "30 SEGUNDOS",
+    "subtitle": "Podés ayudar a salvar una vida",
+    "start": "Empezar",
+    "madeBy": "Hecho por Light-it"
+  },
+  "setup": {
+    "title": "Elegí la ubicación del kiosco para empezar",
+    "location": {
+      "label": "Ubicación",
+      "placeholder": "Elegí la ubicación de este kiosco",
+      "loading": "Cargando ubicaciones…",
+      "required": "Elegí una ubicación"
+    },
+    "language": {
+      "label": "Idioma",
+      "en": "English",
+      "es": "Español"
+    },
+    "selectLocation": "Elegí una ubicación",
+    "continue": "Conectar",
+    "serialPortConnected": "¡Dispositivo conectado!",
+    "serialPortError": "Falló la conexión del dispositivo. Podés continuar en modo manual.",
+    "noInitialMessage": "Sin mensaje inicial del dispositivo. Continuando...",
+    "mode": {
+      "label": "Modo del desafío",
+      "required": "Elegí un modo",
+      "arduino": "Dispositivo Arduino",
+      "manual": "Manual (barra espaciadora)",
+      "arduinoDescription": "Conectarse a un dispositivo Arduino por puerto serial. Se te va a pedir que elijas el dispositivo.",
+      "manualDescription": "Usá la barra espaciadora para simular compresiones a mano. Ideal para probar sin hardware."
+    },
+    "messages": {
+      "portRequestError": "Se canceló la elección del puerto serial. El modo Arduino requiere un dispositivo conectado.",
+      "unsupportedBrowser": "Este kiosco necesita Chrome o Edge sobre HTTPS para acceder al sensor."
+    }
+  },
+  "register": {
+    "title": "Escaneá el código con la cámara de tu celular",
+    "name": "Nombre",
+    "namePlaceholder": "Tu nombre",
+    "lastName": "Apellido",
+    "lastNamePlaceholder": "Tu apellido",
+    "email": "Email",
+    "emailPlaceholder": "vos@ejemplo.com",
+    "continue": "Continuar sin registrarte",
+    "skip": "Omitir",
+    "qrHint": "Completalo en tu celular y esta pantalla avanza sola"
+  },
+  "maintenance": {
+    "title": "En mantenimiento",
+    "body": "Estamos actualizando el equipo. Volvemos en unos minutos.",
+    "handsOff": "Por favor, no toques el maniquí mientras tanto"
+  },
+  "claim": {
+    "title": "Aprendé a salvar vidas",
+    "subtitle": "Dejá tus datos y practicá RCP en 30 compresiones",
+    "consent": "Autorizo a [YOUR ORGANIZATION] a tratar mi nombre y email para gestionar mi participación y enviarme mis resultados.",
+    "submit": "Listo, vamos",
+    "invalid": "Revisá tu nombre, apellido y email.",
+    "doneTitle": "¡Ya estás!",
+    "doneBody": "Volvé a la pantalla grande — empieza sola en unos segundos.",
+    "welcomeBackTitle": "¡Qué bueno verte otra vez, {name}!",
+    "welcomeBackBody": "Esta es tu vuelta número {attempt}. A ver si superás tu mejor puntaje."
+  },
+  "crash": {
+    "title": "Algo salió mal",
+    "kioskBody": "Volvemos al inicio en unos segundos.",
+    "phoneBody": "No pudimos mostrar esta página. Probá de nuevo.",
+    "retry": "Reintentar"
+  }
+}
