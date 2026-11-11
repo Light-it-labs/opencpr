@@ -140,7 +140,7 @@ const useCprSessionStore = create<CprSessionStoreState & CprSessionStoreActions>
     },
     {
       name: "cpr-session-storage",
-      version: 2,
+      version: 1,
       partialize: (state) => {
         return {
           mode: state.mode,
@@ -152,14 +152,12 @@ const useCprSessionStore = create<CprSessionStoreState & CprSessionStoreActions>
         };
       },
       // Version 0 persisted the serial health. Left in storage it would be merged
-      // back on every boot and reported as current, so those two fields go, and
-      // so does version 1's location picked on /setup, which pairing now sets;
+      // back on every boot and reported as current, so only those two fields go;
       // everything else — the kiosk's setup above all — must survive the upgrade.
       migrate: (persistedState) => {
         const state = { ...(persistedState as Record<string, unknown>) };
         delete state.lastSerialStatus;
         delete state.lastSerialOkAt;
-        delete state.locationId;
 
         return state as Pick<
           CprSessionStoreState,

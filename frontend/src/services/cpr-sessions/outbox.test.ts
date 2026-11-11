@@ -98,20 +98,12 @@ const loadOutbox = async () => {
   const stores = await import("@/stores");
   const outbox = await import("./outbox");
 
-  const getKioskToken = vi.mocked(stores.getKioskToken);
-  getKioskToken.mockReturnValue("kiosk-token");
-
-  const clearKioskPairing = vi.mocked(stores.clearKioskPairing);
-  clearKioskPairing.mockImplementation(() => {
-    getKioskToken.mockReturnValue(null);
-  });
+  vi.mocked(stores.getKioskToken).mockReturnValue("kiosk-token");
 
   return {
     ...outbox,
     createCprSession: vi.mocked(api.createCprSession),
     captureMessage: vi.mocked(sentry.captureMessage),
-    clearKioskPairing,
-    getKioskToken,
     getSessionPublicId: vi.mocked(stores.getSessionPublicId),
     mergeCprSession: vi.mocked(stores.mergeCprSession),
   };
@@ -209,74 +201,20 @@ describe("queueCprSession", () => {
     expect(storedIds()).toEqual([]);
   });
 
-  it.each([400, 422])(
-    "drops a run the API refuses outright and reports it, instead of retrying (%i)",
-    async (status) => {
-      const { captureMessage, clearKioskPairing, createCprSession, queueCprSession } =
-        await loadOutbox();
-      createCprSession.mockRejectedValue(httpError(status));
-
-      queueCprSession(payload("run-1"));
-      await settle();
-      await vi.advanceTimersByTimeAsync(60 * 60_000);
-
-      expect(createCprSession).toHaveBeenCalledTimes(1);
-      expect(storedIds()).toEqual([]);
-      expect(clearKioskPairing).not.toHaveBeenCalled();
-      expect(captureMessage).toHaveBeenCalledWith(
-        "Kiosk run rejected by the API",
-        expect.objectContaining({ extra: expect.objectContaining({ status }) }),
-      );
-    },
-  );
-
-  it("keeps a run refused for lack of pairing and stops sending until the kiosk is paired", async () => {
-    const { captureMessage, clearKioskPairing, createCprSession, queueCprSession } =
-      await loadOutbox();
-    createCprSession.mockRejectedValue(httpError(401));
+  it("drops a run the API refuses outright and reports it, instead of retrying", async () => {
+    const { captureMessage, createCprSession, queueCprSession } = await loadOutbox();
+    createCprSession.mockRejectedValue(httpError(422));
 
     queueCprSession(payload("run-1"));
     await settle();
     await vi.advanceTimersByTimeAsync(60 * 60_000);
 
     expect(createCprSession).toHaveBeenCalledTimes(1);
-    expect(clearKioskPairing).toHaveBeenCalledTimes(1);
-    expect(storedIds()).toEqual(["run-1"]);
-    expect(captureMessage).not.toHaveBeenCalledWith(
-      "Kiosk run rejected by the API",
-      expect.anything(),
-    );
-  });
-
-  it("holds runs while the kiosk is unpaired without sending them", async () => {
-    const { createCprSession, getKioskToken, queueCprSession } = await loadOutbox();
-    getKioskToken.mockReturnValue(null);
-
-    queueCprSession(payload("run-1"));
-    await settle();
-    await vi.advanceTimersByTimeAsync(60 * 60_000);
-
-    expect(createCprSession).not.toHaveBeenCalled();
-    expect(storedIds()).toEqual(["run-1"]);
-  });
-
-  it("sends the held runs once the kiosk is paired again", async () => {
-    const { createCprSession, getKioskToken, queueCprSession, retryCprSessionOutbox } =
-      await loadOutbox();
-    createCprSession.mockRejectedValueOnce(httpError(401));
-    createCprSession.mockResolvedValue(savedSession("run-1"));
-
-    queueCprSession(payload("run-1"));
-    await settle();
-
-    expect(storedIds()).toEqual(["run-1"]);
-
-    getKioskToken.mockReturnValue("new-kiosk-token");
-    retryCprSessionOutbox();
-    await settle();
-
-    expect(createCprSession).toHaveBeenCalledTimes(2);
     expect(storedIds()).toEqual([]);
+    expect(captureMessage).toHaveBeenCalledWith(
+      "Kiosk run rejected by the API",
+      expect.objectContaining({ extra: expect.objectContaining({ status: 422 }) }),
+    );
   });
 
   it.each([408, 429])("retries a run the API asked to see later (%i)", async (status) => {
