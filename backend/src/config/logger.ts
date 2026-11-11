@@ -1,8 +1,8 @@
-import * as util from "util";
 import type winston from "winston";
 import { createLogger, format, transports, type Logform } from "winston";
 
 import { env } from ".";
+import { redact } from "../utils/redact";
 
 export const getColor = (infoLevel: string): string => {
   if (env.APP_ENV === "production") return "";
@@ -26,17 +26,6 @@ const serializeErrors = (_key: string, value: unknown) =>
 
 const formatMessage = (info: Logform.TransformableInfo) => {
   if (
-    typeof info.message === "object" &&
-    info.message &&
-    "error" in info.message &&
-    "detail" in info.message
-  )
-    return util.format({
-      error: info.message?.error as Error,
-      detail: info.message?.detail,
-    });
-
-  if (
     typeof info.original === "object" &&
     info?.original &&
     "message" in info.original
@@ -49,7 +38,9 @@ const formatMessage = (info: Logform.TransformableInfo) => {
 export const getMessage = (info: Logform.TransformableInfo) => {
   const message = formatMessage(info);
 
-  return typeof info.stack === "string" ? `${message}\n${info.stack}` : message;
+  return redact(
+    typeof info.stack === "string" ? `${message}\n${info.stack}` : message,
+  );
 };
 
 const hasColor = env.APP_ENV !== "production";
