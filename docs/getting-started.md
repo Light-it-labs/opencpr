@@ -99,9 +99,9 @@ Planning and buying are step 1. The rest happens in this order, and each step's 
 
 2. **Build the sensor.** Build the prototype on your desk first: the sensor on a plug-in JST cable, the firmware and live depth on your laptop. Then wire it for the booth, mount it in the manikin, print the case and calibrate it against the clicker. [Build the sensor](hardware.md)
 3. **Host the software.** Run the API, the kiosk app and the admin portal on public HTTPS addresses, with MySQL, Redis and an SMTP email account. [Host the software](hosting.md)
-4. **Create the location.** Sign in to the admin portal as the bootstrap admin and create the venue under Locations. Do this before the booth computer: the kiosk cannot leave its setup screen without a location. [Before the first day](booth-operations.md#before-the-first-day)
+4. **Create the location.** Sign in to the admin portal as the bootstrap admin and create the venue under Locations. Do this before the booth computer: the kiosk cannot leave its setup screen until it is paired with a location, using a code created under Kiosks. [Before the first day](booth-operations.md#before-the-first-day)
 5. **Set up the booth computer.** Install Chrome in kiosk mode, the serial-port policy and the firmware updater on Ubuntu or macOS, then flash the board once with the updater. [Booth computer](../scripts/booth/README.md)
-6. **First visitor.** Complete the kiosk's setup screen with a keyboard, do one run yourself and check the results email arrives. [Before the first day](booth-operations.md#before-the-first-day)
+6. **First visitor.** Create a pairing code under Kiosks in the admin portal, complete the kiosk's setup screen with a keyboard, do one run yourself and check the results email arrives. [Before the first day](booth-operations.md#before-the-first-day)
 7. **Keep it running.** Software updates reach the booth on their own; firmware updates, alerts and troubleshooting are in [Run a booth](booth-operations.md).
 
 To look around before buying anything, run the whole stack on a laptop: [Try it on your laptop](../README.md#try-it-on-your-laptop).

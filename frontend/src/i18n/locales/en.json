@@ -171,11 +171,20 @@
   },
   "setup": {
     "title": "Please select the Kiosk location to get started",
-    "location": {
-      "label": "Location",
-      "placeholder": "Select this kiosk's location",
-      "loading": "Loading locations…",
-      "required": "Please select a location"
+    "pairing": {
+      "label": "Pairing code",
+      "placeholder": "XXXX-XXXX",
+      "help": "Create a code under Kiosks in the admin portal. It works once and expires after 15 minutes.",
+      "notPaired": "This kiosk is not paired. Enter a pairing code to connect it to its location.",
+      "pairedTo": "Paired to {name} — {city}",
+      "pairAgain": "Pair again",
+      "keepPairing": "Keep the current pairing",
+      "errors": {
+        "required": "Enter the pairing code",
+        "format": "A pairing code has 8 characters",
+        "rejected": "This pairing code is invalid or has expired. Create a new one in the admin portal.",
+        "rateLimited": "Too many attempts. Wait a minute and try again."
+      }
     },
     "language": {
       "label": "Language",

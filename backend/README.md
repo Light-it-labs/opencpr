@@ -58,10 +58,10 @@ them by hash in its journal.
 
 ## Kiosk API
 
-`GET /locations` backs the kiosk setup screen and lists current and upcoming
-locations only: disabled ones and those whose `endDate` (a calendar day in the
-location's `timezone`) is already past are left out; a location with no
-`endDate` is always listed. The admin list (`GET /admin/locations`) is not
+`GET /locations` is public and lists current and upcoming locations only:
+disabled ones and those whose `endDate` (a calendar day in the location's
+`timezone`) is already past are left out; a location with no `endDate` is
+always listed. The admin list (`GET /admin/locations`) is not
 filtered this way.
 
 A booth must be paired before it can report or save runs. An admin creates a

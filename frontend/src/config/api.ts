@@ -1,5 +1,6 @@
 import axios, { type AxiosError } from "axios";
 
+import { getKioskToken } from "@/stores";
 import { env } from "./env";
 
 const baseApiConfiguration = {
@@ -29,4 +30,16 @@ privateApi.interceptors.response.use(
 
 const publicApi = axios.create(baseApiConfiguration);
 
-export { privateApi, publicApi };
+const kioskApi = axios.create(baseApiConfiguration);
+
+kioskApi.interceptors.request.use((config) => {
+  const token = getKioskToken();
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
+});
+
+export { kioskApi, privateApi, publicApi };

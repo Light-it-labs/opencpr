@@ -36,7 +36,7 @@ sudo reboot
 
 The installer prints every path it writes and ends with a checklist. After the reboot, the computer logs in as `kiosk` and the kiosk opens on its own.
 
-First run **with a keyboard attached**: complete `/setup`, pick the location and Arduino mode, and grant the serial port once if Chrome asks. The permission is stored in the kiosk's Chrome profile; with the policy in place Chrome grants Arduino boards without asking. Then flash the board once, as in [Updating the firmware](#updating-the-firmware), so it runs the firmware from this clone. Confirm the booth shows up in the admin portal, then remove the keyboard.
+First run **with a keyboard attached**: complete `/setup`: type a pairing code created under Kiosks in the admin portal, pick Arduino mode, and grant the serial port once if Chrome asks. The permission is stored in the kiosk's Chrome profile; with the policy in place Chrome grants Arduino boards without asking. Then flash the board once, as in [Updating the firmware](#updating-the-firmware), so it runs the firmware from this clone. Confirm the booth shows up in the admin portal, then remove the keyboard.
 
 Optional, for maintainers who update the booth over ssh: Ubuntu Desktop does not include an ssh server, so install one.
 

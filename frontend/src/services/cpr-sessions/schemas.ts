@@ -31,7 +31,6 @@ export const cprSessionSchema = z.object({
 export const createCprSessionSchema = cprSessionSchema.pick({
   publicId: true,
   registrationId: true,
-  locationId: true,
   kioskId: true,
   buildId: true,
   compressions: true,

@@ -3,10 +3,10 @@ import { useCallback, useEffect, useRef } from "react";
 import { KIOSK_MAINTENANCE_STATUS, useSendKioskHeartbeat } from "@/services/kiosks";
 import {
   ensureKioskId,
+  useKioskToken,
   useLastBaselineMm,
   useLastSerialOkAt,
   useLastSerialStatus,
-  useLocationId,
 } from "@/stores";
 
 const HEARTBEAT_INTERVAL_MS = 2 * 60 * 1000;
@@ -67,7 +67,7 @@ export const useKioskMonitor = ({
    */
   isMaintenance: boolean;
 }) => {
-  const locationId = useLocationId();
+  const kioskToken = useKioskToken();
   const lastSerialStatus = useLastSerialStatus();
   const lastSerialOkAt = useLastSerialOkAt();
   const lastBaselineMm = useLastBaselineMm();
@@ -76,14 +76,12 @@ export const useKioskMonitor = ({
 
   // Read through a ref so changing values never restart the interval.
   const payloadRef = useRef({
-    locationId,
     lastSerialStatus,
     lastSerialOkAt,
     lastBaselineMm,
     isMaintenance,
   });
   payloadRef.current = {
-    locationId,
     lastSerialStatus,
     lastSerialOkAt,
     lastBaselineMm,
@@ -104,7 +102,6 @@ export const useKioskMonitor = ({
       // Minted here rather than during render, where writing to the store is
       // illegal and blows the update depth. Becomes the board's ID once it reports one.
       kioskId: ensureKioskId(),
-      locationId: current.locationId,
       // The port is closed on purpose, so the link's own status means nothing
       // here. Any other status ends maintenance on the backend.
       serialStatus: current.isMaintenance ? KIOSK_MAINTENANCE_STATUS : current.lastSerialStatus,
@@ -114,9 +111,9 @@ export const useKioskMonitor = ({
     });
   }, [sendHeartbeat]);
 
-  // A browser that beats before /setup registers itself as a kiosk that isn't
-  // one. Depended on, not read through the ref, so setup reports promptly.
-  const isSetUp = Boolean(locationId);
+  // Only a paired kiosk may beat; the API refuses anything else. Depended on,
+  // not read through the ref, so pairing reports promptly.
+  const isSetUp = Boolean(kioskToken);
 
   useEffect(() => {
     if (!isSetUp) {

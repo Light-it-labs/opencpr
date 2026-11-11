@@ -1,7 +1,7 @@
 import * as Sentry from "@sentry/react";
-import { isAxiosError } from "axios";
+import { HttpStatusCode, isAxiosError } from "axios";
 
-import { getSessionPublicId, mergeCprSession } from "@/stores";
+import { clearKioskPairing, getKioskToken, getSessionPublicId, mergeCprSession } from "@/stores";
 import { createCprSession } from "./api";
 import type { CprSession, CreateCprSession, CreatedCprSession } from "./types";
 
@@ -77,11 +77,23 @@ const getRetryDelay = (attempts: number) => {
   return RETRY_DELAYS_MS[attempts - 1] ?? STEADY_RETRY_MS;
 };
 
-// 408 and 429 ask to be tried later; any other 4xx is refused however often it is sent.
-const isPermanentRejection = (error: unknown) => {
-  const status = isAxiosError(error) ? error.response?.status : undefined;
+const getStatus = (error: unknown) => {
+  return isAxiosError(error) ? error.response?.status : undefined;
+};
 
-  return status !== undefined && status >= 400 && status < 500 && status !== 408 && status !== 429;
+// 408 and 429 ask to be tried later, and 401 once the kiosk is paired again;
+// any other 4xx is refused however often it is sent.
+const isPermanentRejection = (error: unknown) => {
+  const status = getStatus(error);
+
+  return (
+    status !== undefined &&
+    status >= 400 &&
+    status < 500 &&
+    status !== HttpStatusCode.RequestTimeout &&
+    status !== HttpStatusCode.TooManyRequests &&
+    status !== HttpStatusCode.Unauthorized
+  );
 };
 
 const reportStaleItems = (now: number) => {
@@ -126,10 +138,19 @@ const send = async (item: OutboxItem) => {
 
     return true;
   } catch (error) {
+    if (getStatus(error) === HttpStatusCode.Unauthorized) {
+      clearKioskPairing();
+      item.nextAttemptAt = Date.now() + getRetryDelay(1);
+      blockedUntil = item.nextAttemptAt;
+      persist();
+
+      return false;
+    }
+
     if (isPermanentRejection(error)) {
       remove(publicId);
       report("Kiosk run rejected by the API", item, {
-        status: isAxiosError(error) ? error.response?.status : undefined,
+        status: getStatus(error),
       });
 
       return true;
@@ -148,6 +169,10 @@ const scheduleNext = () => {
   if (timer) {
     clearTimeout(timer);
     timer = null;
+  }
+
+  if (!getKioskToken()) {
+    return;
   }
 
   const wakeTimes = getQueue().map((item) => {
@@ -184,7 +209,7 @@ const flush = async (force: boolean) => {
   const attempted = new Set<string>();
 
   try {
-    for (;;) {
+    while (getKioskToken()) {
       const now = Date.now();
       reportStaleItems(now);
 
@@ -221,6 +246,8 @@ const retryNow = () => {
   blockedUntil = 0;
   void flush(true);
 };
+
+export const retryCprSessionOutbox = retryNow;
 
 /**
  * Keeps a finished run until the API has it. Written to storage before the

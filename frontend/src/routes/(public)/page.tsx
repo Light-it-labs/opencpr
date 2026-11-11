@@ -9,6 +9,7 @@ import {
   CHALLENGE_MODES,
   clearRegistration,
   setSerialPort,
+  useKioskToken,
   useMode,
   useSerialPort,
 } from "@/stores";
@@ -17,6 +18,7 @@ import { getAuthorizedPort } from "@/utils";
 const RouteComponent = () => {
   const serialPort = useSerialPort();
   const mode = useMode();
+  const kioskToken = useKioskToken();
   const { t } = useTranslation();
 
   // A port authorized on a previous launch comes back without a prompt, so the
@@ -52,7 +54,7 @@ const RouteComponent = () => {
     clearRegistration();
   }, []);
 
-  if (!serialPort && mode === CHALLENGE_MODES.ARDUINO && hasCheckedPort) {
+  if (!kioskToken || (!serialPort && mode === CHALLENGE_MODES.ARDUINO && hasCheckedPort)) {
     return <Navigate to="/setup" />;
   }
 

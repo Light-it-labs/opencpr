@@ -9,9 +9,30 @@ export const KIOSK_MAINTENANCE_STATUS = "maintenance";
 
 /** What a booth reports so a broken one is visible without walking to it. */
 export const kioskHeartbeatSchema = z.object({
-  locationId: z.string().nullable(),
   serialStatus: z.string().nullable(),
   serialOkAt: z.string().nullable(),
   baselineMm: z.number().nullable(),
   buildId: z.string(),
+});
+
+export const PAIRING_CODE_LENGTH = 8;
+
+export const normalizePairingCode = (code: string) => {
+  return code.replace(/[\s-]/g, "").toUpperCase();
+};
+
+export const pairedLocationSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  city: z.string(),
+});
+
+export const pairKioskSchema = z.object({
+  code: z.string(),
+  kioskId: z.string(),
+});
+
+export const kioskPairingSchema = z.object({
+  token: z.string(),
+  location: pairedLocationSchema,
 });

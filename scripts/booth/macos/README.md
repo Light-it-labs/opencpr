@@ -27,7 +27,7 @@ All three read `~/.config/opencpr/booth.env`, created from the shared [`../booth
    ```
 
 3. Double-click `macos/install-chrome-serial-policy.command`. It writes the `SerialAllowUsbDevicesForUrls` policy for `KIOSK_URL` into Chrome's preferences, so a board plugged back in after a reboot reconnects with nobody at the booth. Chrome reads it at launch.
-4. First run of `start-kiosk.command` **with a keyboard attached**: complete `/setup`, pick the location and Arduino mode, and grant the serial port if Chrome asks. The permission is stored in the kiosk's Chrome profile, so granting it in your everyday Chrome does not count.
+4. First run of `start-kiosk.command` **with a keyboard attached**: complete `/setup`: type a pairing code created under Kiosks in the admin portal, pick Arduino mode, and grant the serial port if Chrome asks. The permission is stored in the kiosk's Chrome profile, so granting it in your everyday Chrome does not count.
 5. Flash the board once: double-click `update-firmware.command`, so the board runs the firmware from this clone. On this first run macOS asks once to let Terminal control Chrome; allow it, or the updater cannot switch the kiosk to the maintenance screen.
 6. System Settings:
    - Users & Groups → Login Options → automatic login for this user

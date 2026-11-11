@@ -12,7 +12,7 @@ All notable changes to OpenCPR are listed here. The format follows [Keep a Chang
 
 ### Changed
 
-- Every booth must be paired after upgrading: create a code under Kiosks in the admin portal and type it on the kiosk's setup screen. Until then the API refuses its heartbeats and runs, and the kiosk keeps its unsent runs.
+- Every booth must be paired after upgrading: create a code under Kiosks in the admin portal and type it on the kiosk's setup screen. Until then the API refuses its heartbeats and runs, and the kiosk keeps its unsent runs. The setup screen asks for the code in place of the location list, and a kiosk whose pairing is revoked returns to it.
 
 ### Security
 

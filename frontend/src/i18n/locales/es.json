@@ -171,11 +171,20 @@
   },
   "setup": {
     "title": "Elegí la ubicación del kiosco para empezar",
-    "location": {
-      "label": "Ubicación",
-      "placeholder": "Elegí la ubicación de este kiosco",
-      "loading": "Cargando ubicaciones…",
-      "required": "Elegí una ubicación"
+    "pairing": {
+      "label": "Código de vinculación",
+      "placeholder": "XXXX-XXXX",
+      "help": "Creá un código en Kiosks del portal de administración. Sirve una sola vez y vence a los 15 minutos.",
+      "notPaired": "Este kiosco no está vinculado. Ingresá un código de vinculación para conectarlo con su ubicación.",
+      "pairedTo": "Vinculado a {name} — {city}",
+      "pairAgain": "Vincular de nuevo",
+      "keepPairing": "Mantener la vinculación actual",
+      "errors": {
+        "required": "Ingresá el código de vinculación",
+        "format": "Un código de vinculación tiene 8 caracteres",
+        "rejected": "Este código de vinculación no es válido o ya venció. Creá uno nuevo en el portal de administración.",
+        "rateLimited": "Demasiados intentos. Esperá un minuto y probá de nuevo."
+      }
     },
     "language": {
       "label": "Idioma",

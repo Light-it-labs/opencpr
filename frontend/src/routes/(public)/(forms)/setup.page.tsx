@@ -1,61 +1,125 @@
+import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { HttpStatusCode, isAxiosError } from "axios";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { Button, Label, RadioGroup, Select } from "@/components/ui";
+import { Button, Input, Label, RadioGroup } from "@/components/ui";
 import { DEFAULT_LANGUAGE, LANGUAGES } from "@/i18n";
-import { useLocations } from "@/services/locations";
+import { normalizePairingCode, PAIRING_CODE_LENGTH, usePairKiosk } from "@/services/kiosks";
 import {
   CHALLENGE_MODES,
+  ensureKioskId,
   setLanguage,
-  setLocationId,
   setMode,
   setSerialPort,
+  useKioskToken,
   useLanguage,
-  useLocationId,
+  usePairedLocation,
 } from "@/stores";
 import { getAuthorizedPort, isSerialSupported, requestSerialPort } from "@/utils";
 
-export const setupFormSchema = z.object({
-  mode: z.enum([CHALLENGE_MODES.ARDUINO, CHALLENGE_MODES.MANUAL]),
-  // Which venue this machine is standing in. Stored per browser rather than
-  // baked into the build, so one deployment serves every event.
-  locationId: z.string().min(1),
-  language: z.enum([LANGUAGES.EN, LANGUAGES.ES]),
-});
+const PAIRING_ERROR_KEYS = {
+  required: "setup.pairing.errors.required",
+  format: "setup.pairing.errors.format",
+  rejected: "setup.pairing.errors.rejected",
+  rateLimited: "setup.pairing.errors.rateLimited",
+  unreachable: "common.requestError",
+} as const;
 
-export type SetupFormData = z.infer<typeof setupFormSchema>;
+type PairingError = keyof typeof PAIRING_ERROR_KEYS;
+
+const isPairingError = (message: string | undefined): message is PairingError => {
+  return message !== undefined && Object.hasOwn(PAIRING_ERROR_KEYS, message);
+};
+
+const toPairingError = (error: unknown): PairingError => {
+  const status = isAxiosError(error) ? error.response?.status : undefined;
+
+  if (status === HttpStatusCode.BadRequest) {
+    return "rejected";
+  }
+
+  if (status === HttpStatusCode.TooManyRequests) {
+    return "rateLimited";
+  }
+
+  return "unreachable";
+};
+
+export const setupFormSchema = z
+  .object({
+    mode: z.enum([CHALLENGE_MODES.ARDUINO, CHALLENGE_MODES.MANUAL]),
+    language: z.enum([LANGUAGES.EN, LANGUAGES.ES]),
+    isPairing: z.boolean(),
+    code: z.string().transform(normalizePairingCode),
+  })
+  .superRefine((values, context) => {
+    if (!values.isPairing) {
+      return;
+    }
+
+    if (!values.code) {
+      context.addIssue({ code: "custom", path: ["code"], message: "required" });
+    } else if (values.code.length !== PAIRING_CODE_LENGTH) {
+      context.addIssue({ code: "custom", path: ["code"], message: "format" });
+    }
+  });
+
+export type SetupFormValues = z.input<typeof setupFormSchema>;
+export type SetupFormData = z.output<typeof setupFormSchema>;
 
 const RouteComponent = () => {
   const { i18n, t } = useTranslation();
   const navigate = useNavigate();
 
-  const savedLocationId = useLocationId();
   const savedLanguage = useLanguage();
-  const { data: locations, isPending: isLoadingLocations } = useLocations();
+  const kioskToken = useKioskToken();
+  const pairedLocation = usePairedLocation();
+  const isPaired = Boolean(kioskToken && pairedLocation);
+
+  const { mutateAsync: pairKiosk } = usePairKiosk();
 
   const {
+    clearErrors,
     control,
     formState: { errors, isSubmitting },
     handleSubmit,
+    register,
+    setError,
+    setValue,
     watch,
-  } = useForm<SetupFormData>({
+  } = useForm<SetupFormValues, unknown, SetupFormData>({
     resolver: zodResolver(setupFormSchema),
     defaultValues: {
       mode: CHALLENGE_MODES.ARDUINO,
-      locationId: savedLocationId ?? "",
       language: savedLanguage ?? DEFAULT_LANGUAGE,
+      isPairing: !isPaired,
+      code: "",
     },
   });
 
   const selectedMode = watch("mode");
+  const isPairing = watch("isPairing");
+  const codeError = errors.code?.message;
+
+  useEffect(() => {
+    if (!isPaired) {
+      setValue("isPairing", true);
+    }
+  }, [isPaired, setValue]);
+
+  const keepCurrentPairing = () => {
+    setValue("isPairing", false);
+    setValue("code", "");
+    clearErrors("code");
+  };
 
   const onSubmit = async (data: SetupFormData) => {
     setMode(data.mode);
-    setLocationId(data.locationId);
     setLanguage(data.language);
 
     // Request serial port access only if Arduino mode is selected
@@ -78,6 +142,19 @@ const RouteComponent = () => {
 
       setSerialPort(port);
     }
+
+    if (data.isPairing) {
+      try {
+        await pairKiosk({ code: data.code, kioskId: ensureKioskId() });
+      } catch (error) {
+        setError("code", { type: "server", message: toPairingError(error) });
+
+        return;
+      }
+
+      keepCurrentPairing();
+    }
+
     await navigate({ to: "/" });
   };
 
@@ -116,48 +193,68 @@ const RouteComponent = () => {
           }}
         />
 
-        <Label aria-required>{t("setup.location.label")}</Label>
+        {isPaired && pairedLocation && !isPairing ? (
+          <>
+            <Label>{t("setup.pairing.label")}</Label>
 
-        <Controller
-          control={control}
-          name="locationId"
-          render={({ field }) => {
-            const isKnownLocation = locations?.some((location) => {
-              return location.id === field.value;
-            });
+            <div className="flex items-center justify-between gap-4">
+              <p className="text-sm">
+                {t("setup.pairing.pairedTo", {
+                  name: pairedLocation.name,
+                  city: pairedLocation.city,
+                })}
+              </p>
 
-            return (
-              <Select.Root
-                onValueChange={field.onChange}
-                value={isKnownLocation ? field.value : ""}
+              <Button
+                onClick={() => {
+                  setValue("isPairing", true);
+                }}
+                type="button"
+                variant="outline"
               >
-                <Select.Trigger className="w-full">
-                  <Select.Value
-                    placeholder={
-                      isLoadingLocations
-                        ? t("setup.location.loading")
-                        : t("setup.location.placeholder")
-                    }
-                  />
-                </Select.Trigger>
+                {t("setup.pairing.pairAgain")}
+              </Button>
+            </div>
+          </>
+        ) : (
+          <>
+            <Label htmlFor="pairing-code" aria-required>
+              {t("setup.pairing.label")}
+            </Label>
 
-                <Select.Content>
-                  {locations?.map((location) => {
-                    return (
-                      <Select.Item key={location.id} value={location.id}>
-                        {location.name} — {location.city}
-                      </Select.Item>
-                    );
-                  })}
-                </Select.Content>
-              </Select.Root>
-            );
-          }}
-        />
+            {isPaired ? null : (
+              <p className="text-sm text-muted-foreground">{t("setup.pairing.notPaired")}</p>
+            )}
 
-        {errors.locationId ? (
-          <p className="text-sm text-destructive">{t("setup.location.required")}</p>
-        ) : null}
+            <Input
+              {...register("code")}
+              aria-invalid={Boolean(codeError)}
+              autoCapitalize="characters"
+              autoComplete="off"
+              className="font-mono tracking-widest uppercase"
+              id="pairing-code"
+              placeholder={t("setup.pairing.placeholder")}
+              spellCheck={false}
+            />
+
+            <p className="text-sm text-muted-foreground">{t("setup.pairing.help")}</p>
+
+            {isPairingError(codeError) ? (
+              <p className="text-sm text-destructive">{t(PAIRING_ERROR_KEYS[codeError])}</p>
+            ) : null}
+
+            {isPaired ? (
+              <Button
+                className="self-start"
+                onClick={keepCurrentPairing}
+                type="button"
+                variant="outline"
+              >
+                {t("setup.pairing.keepPairing")}
+              </Button>
+            ) : null}
+          </>
+        )}
 
         <Label aria-required>{t("setup.mode.label")}</Label>
 

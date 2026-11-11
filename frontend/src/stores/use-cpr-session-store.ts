@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 import type { Language } from "@/i18n";
+import type { PairedLocation } from "@/services/kiosks/types";
 
 // What the sensor measured, and nothing else. Rate, full-compression and
 // full-recoil are judgments against AHA guidelines and are derived in
@@ -53,8 +54,8 @@ export type SerialStatus =
 const SERIAL_HEALTH_REFRESH_MS = 60_000;
 
 export type CprSessionStoreState = {
-  /** Venue this kiosk is standing in. Chosen on /setup, persisted per browser. */
-  locationId: string | null;
+  kioskToken: string | null;
+  pairedLocation: PairedLocation | null;
   /** Language the kiosk speaks. Chosen on /setup, persisted per browser. */
   language: Language | null;
   /**
@@ -111,7 +112,8 @@ const useCprSessionStore = create<CprSessionStoreState & CprSessionStoreActions>
     (set) => {
       return {
         currentSession: null,
-        locationId: null,
+        kioskToken: null,
+        pairedLocation: null,
         language: null,
         kioskId: null,
         lastSerialStatus: null,
@@ -138,27 +140,30 @@ const useCprSessionStore = create<CprSessionStoreState & CprSessionStoreActions>
     },
     {
       name: "cpr-session-storage",
-      version: 1,
+      version: 2,
       partialize: (state) => {
         return {
           mode: state.mode,
-          locationId: state.locationId,
+          kioskToken: state.kioskToken,
+          pairedLocation: state.pairedLocation,
           language: state.language,
           kioskId: state.kioskId,
           lastBaselineMm: state.lastBaselineMm,
         };
       },
       // Version 0 persisted the serial health. Left in storage it would be merged
-      // back on every boot and reported as current, so only those two fields go;
+      // back on every boot and reported as current, so those two fields go, and
+      // so does version 1's location picked on /setup, which pairing now sets;
       // everything else — the kiosk's setup above all — must survive the upgrade.
       migrate: (persistedState) => {
         const state = { ...(persistedState as Record<string, unknown>) };
         delete state.lastSerialStatus;
         delete state.lastSerialOkAt;
+        delete state.locationId;
 
         return state as Pick<
           CprSessionStoreState,
-          "mode" | "locationId" | "language" | "kioskId" | "lastBaselineMm"
+          "mode" | "kioskToken" | "pairedLocation" | "language" | "kioskId" | "lastBaselineMm"
         >;
       },
     },
@@ -305,15 +310,41 @@ export const usePreviousScore = () => {
   });
 };
 
-export const useLocationId = () => {
+export const useKioskToken = () => {
   return useCprSessionStore((state) => {
-    return state.locationId;
+    return state.kioskToken;
   });
 };
 
-export const setLocationId = (locationId: string | null) => {
+export const getKioskToken = () => {
+  return useCprSessionStore.getState().kioskToken;
+};
+
+export const usePairedLocation = () => {
+  return useCprSessionStore((state) => {
+    return state.pairedLocation;
+  });
+};
+
+export const setKioskPairing = ({
+  location,
+  token,
+}: {
+  token: string;
+  location: PairedLocation;
+}) => {
   return useCprSessionStore.setState((state) => {
-    return { ...state, locationId };
+    return { ...state, kioskToken: token, pairedLocation: location };
+  });
+};
+
+export const clearKioskPairing = () => {
+  if (!useCprSessionStore.getState().kioskToken) {
+    return;
+  }
+
+  useCprSessionStore.setState((state) => {
+    return { ...state, kioskToken: null, pairedLocation: null };
   });
 };
 

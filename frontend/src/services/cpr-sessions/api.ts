@@ -1,4 +1,4 @@
-import { publicApi } from "@/config/api";
+import { kioskApi, publicApi } from "@/config/api";
 import type { Response } from "../types";
 import type {
   ClaimResult,
@@ -13,7 +13,7 @@ import type {
 const CREATE_TIMEOUT_MS = 15_000;
 
 export const createCprSession = async (payload: CreateCprSession) => {
-  const { data } = await publicApi.post<Response<CreatedCprSession>>("/cpr-sessions", payload, {
+  const { data } = await kioskApi.post<Response<CreatedCprSession>>("/cpr-sessions", payload, {
     timeout: CREATE_TIMEOUT_MS,
   });
 

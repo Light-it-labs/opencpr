@@ -57,7 +57,7 @@ It needs an adult CPR manikin with a hinged chest plate and room in the chest ca
 
 ### Can I run several kiosks at one location, or kiosks at several locations?
 
-Yes, both. Each kiosk picks its location on its setup screen, and the code sets no limit on kiosks per location or on locations. A kiosk is identified by its board's ID, and ranks are counted per location per day. See [Identity and data](architecture.md#identity-and-data).
+Yes, both. Each kiosk is paired with its location from its setup screen, with a one-time code created under Kiosks in the admin portal, and the code sets no limit on kiosks per location or on locations. A kiosk is identified by its board's ID, and ranks are counted per location per day. See [Identity and data](architecture.md#identity-and-data).
 
 ### How much space and power does a booth need?
 
@@ -105,7 +105,7 @@ The full guide is [Host the software](hosting.md).
 
 ### Do I need to host anything, or can I use only the kiosk?
 
-You need the API. The kiosk's setup screen loads its locations from it and does not leave setup without one, and saving runs, phone registration, emails and the admin portal all go through it. There is no kiosk-only mode. See [What runs where](hosting.md#what-runs-where).
+You need the API. The kiosk's setup screen pairs the kiosk with a location through it and does not leave setup until it is paired, and saving runs, phone registration, emails and the admin portal all go through it. There is no kiosk-only mode. See [What runs where](hosting.md#what-runs-where).
 
 ### Can I run it without Docker?
 

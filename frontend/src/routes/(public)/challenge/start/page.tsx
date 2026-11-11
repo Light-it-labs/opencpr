@@ -19,8 +19,8 @@ import {
   type CprCompression,
   ensureKioskId,
   setCprSession,
-  useLocationId,
   useMode,
+  usePairedLocation,
   useRegistrationId,
   useSerialPort,
   useSessionPublicId,
@@ -60,7 +60,7 @@ const RouteComponent = () => {
   const isArduinoMode = mode === CHALLENGE_MODES.ARDUINO;
   const sessionPublicId = useSessionPublicId();
   const registrationId = useRegistrationId();
-  const locationId = useLocationId();
+  const locationId = usePairedLocation()?.id ?? null;
 
   useEffect(() => {
     setKioskContext({ locationId, mode });
@@ -214,11 +214,10 @@ const RouteComponent = () => {
       // the results if that happens while they are still showing. A manual run
       // is a spacebar demo, not a measured one: it is never saved, so it stays
       // out of the stats and sends no email.
-      if (isArduinoMode && sessionPublicId && locationId) {
+      if (isArduinoMode && sessionPublicId) {
         queueCprSession({
           publicId: sessionPublicId,
           registrationId,
-          locationId,
           kioskId: ensureKioskId(),
           buildId: __BUILD_ID__,
           compressions: collected,
@@ -227,7 +226,7 @@ const RouteComponent = () => {
 
       navigate({ to: "/challenge/results" });
     },
-    [navigate, stopSerial, stopAudio, isArduinoMode, sessionPublicId, registrationId, locationId],
+    [navigate, stopSerial, stopAudio, isArduinoMode, sessionPublicId, registrationId],
   );
 
   useEffect(() => {
