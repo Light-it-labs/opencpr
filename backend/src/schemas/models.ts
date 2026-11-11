@@ -3,7 +3,7 @@ import z from "zod";
 
 import { cprSessions, participants } from "@/models";
 
-/** The challenge asks for 30; twice that leaves room without letting a request grow unbounded. */
+// The challenge asks for 30; twice that leaves headroom.
 const MAX_COMPRESSIONS_PER_RUN = 60;
 const MAX_RUN_DURATION_MS = 10 * 60_000;
 const MAX_DEPTH_MM = 200;
@@ -17,10 +17,7 @@ const compressionSchema = z.object({
   endDepthMm: z.number().min(0).max(MAX_DEPTH_MM),
 });
 
-// Only fields the kiosk owns are listed: the row id, timestamps and scores are
-// the server's, and so are the kiosk and location, taken from the booth's
-// pairing. Unknown keys are dropped rather than rejected. The participant is
-// never set by the caller: it is linked from the phone claim.
+// The participant, kiosk and location are never set by the caller: they come from the claim and the pairing.
 export const createCprSessionSchema = z.object({
   publicId: z.string().min(1).max(36),
   registrationId: z.string().max(36).nullish(),
@@ -53,10 +50,7 @@ export const claimSessionSchema = z.object({
   email: z.email(),
 });
 
-/**
- * Reported by each booth so a broken one is visible without walking to it. The
- * location comes from the booth's pairing.
- */
+/** Reported by each booth so a broken one is visible without walking to it. */
 export const kioskHeartbeatSchema = z.object({
   /** Last serial status the kiosk observed, e.g. reading / no-signal. */
   serialStatus: z.string().max(32).nullish(),

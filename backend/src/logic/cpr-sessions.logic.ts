@@ -59,11 +59,7 @@ const registrationTakenError = () =>
 const startOfToday = (timezone: string) =>
   startOfLocalDay(timezone, new Date());
 
-/**
- * The registration id is printed in the booth QR and the phone URL, so anyone
- * who saw it could post runs under it and have results mailed to its owner.
- * A real replay at the booth takes 45 to 90 s, so it still gets its email.
- */
+// A real replay at the booth takes 45 to 90 s, so it still gets its email.
 const RESULTS_EMAIL_INTERVAL_SECONDS = 30;
 
 /** A booth visit lasts minutes; a registration is not a standing pass. */
@@ -193,7 +189,6 @@ export const CprSessionsLogic = {
     };
   },
 
-  /** The kiosk and location are the paired booth's, never the payload's. */
   create: async (data: CreateCprSession, kiosk: AuthenticatedKiosk) => {
     const location = await LocationsRepository.get(kiosk.locationId);
     if (!location) {
@@ -274,8 +269,7 @@ export const CprSessionsLogic = {
       }
     }
 
-    // Only what the kiosk shows. Any paired booth may send any publicId, so the
-    // run's ids and who played stay out of the answer, a replayed one included.
+    // Any paired booth may send any publicId, so the run's ids and who played stay out.
     return {
       publicId: session.publicId,
       position,

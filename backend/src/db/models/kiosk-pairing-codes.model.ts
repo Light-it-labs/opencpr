@@ -6,10 +6,6 @@ import { timestamps } from "../helpers/timestamps";
 import { locations } from "./locations.model";
 import { users } from "./users.model";
 
-/**
- * One-time codes an admin hands to a booth so it can pair with a location.
- * Only the sha256 of the code is stored, and usedAt makes each code single-use.
- */
 export const kioskPairingCodes = m.mysqlTable("kiosk_pairing_codes", {
   id: m
     .varchar({ length: 36 })

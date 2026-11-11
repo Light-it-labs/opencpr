@@ -12,10 +12,6 @@ export const KioskPairingCodesRepository = {
     await db.insert(kioskPairingCodes).values(data);
   },
 
-  /**
-   * Locks the code's row until the transaction ends, so two booths typing the
-   * same code at once are judged one after the other.
-   */
   getForUpdate: async (codeHash: string, executor: DbExecutor) => {
     const [code] = await executor
       .select()
@@ -26,7 +22,6 @@ export const KioskPairingCodesRepository = {
     return code;
   },
 
-  /** False when the code was already spent, so it can never pair twice. */
   markUsed: async (id: string, executor: DbExecutor) => {
     const [result] = await executor
       .update(kioskPairingCodes)

@@ -1,9 +1,6 @@
 import { randomInt } from "node:crypto";
 
-/**
- * Typed by hand at the booth, so the characters people confuse (0/O, 1/I/L)
- * are left out.
- */
+// Typed by hand at the booth, so the characters people confuse (0/O, 1/I/L) are left out.
 // cspell:disable-next-line
 export const PAIRING_CODE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
 
@@ -15,6 +12,5 @@ export const generatePairingCode = () =>
     () => PAIRING_CODE_ALPHABET[randomInt(PAIRING_CODE_ALPHABET.length)],
   ).join("");
 
-/** Accepts the code however it was typed: any case, with spaces or dashes. */
 export const normalizePairingCode = (code: string) =>
   code.replace(/[\s-]/g, "").toUpperCase();

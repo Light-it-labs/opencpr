@@ -42,7 +42,7 @@ const TRANSITION_MESSAGES: Record<KioskAlertState, string> = {
 
 /**
  * A booth with a loose cable, or anyone holding its token, could flip its
- * state back and forth with heartbeats and page on every flip. A heartbeat therefore
+ * state back and forth and page on every flip. A heartbeat therefore
  * leaves alone a kiosk whose state changed less than this ago; the scheduled
  * check still judges it within minutes, so a real change is delayed, not lost.
  */

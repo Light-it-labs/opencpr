@@ -30,10 +30,6 @@ export const kiosks = m.mysqlTable("kiosks", {
   baselineMm: m.float("baseline_mm"),
   /** Frontend build the kiosk is running, to spot one left on stale code. */
   buildId: m.varchar("build_id", { length: 64 }),
-  /**
-   * sha256 of the token the booth got when it paired; heartbeats and run saves
-   * must carry the token. Null for a booth that was never paired or was revoked.
-   */
   tokenHash: m.varchar("token_hash", { length: 64 }).unique(),
   pairedAt: m.timestamp("paired_at"),
   ...timestamps,
