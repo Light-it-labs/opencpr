@@ -251,11 +251,7 @@ export const ParticipantsRepository = {
     return { participant: createdParticipant, existed: false };
   },
 
-  /**
-   * Stamps the participant as emailed unless they already were after
-   * `notSince`, and answers whether this caller won the stamp. One conditional
-   * update, so concurrent saves for the same participant cannot both send.
-   */
+  // One conditional update, so concurrent saves for the same participant cannot both send.
   reserveResultsEmail: async (id: Participant["id"], notSince: Date) => {
     const [result] = await db
       .update(participants)
