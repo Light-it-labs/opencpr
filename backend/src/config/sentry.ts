@@ -1,7 +1,7 @@
 import * as Sentry from "@sentry/node";
 import { ZodError } from "zod";
 
-import { scrubBreadcrumb, scrubEvent, scrubSpan } from "./sentry-scrub";
+import { redact } from "../utils/redact";
 import { StatusCodes } from "./status-codes";
 
 /**
@@ -49,10 +49,13 @@ export const initializeSentry = () => {
       queues: false,
       graphQL: { document: false, variables: false },
     },
-    // beforeSendSpan, not beforeSendTransaction: SDK 11 streams spans and skips the latter.
-    beforeSend: scrubEvent,
-    beforeSendSpan: scrubSpan,
-    beforeBreadcrumb: scrubBreadcrumb,
+    beforeSend: (event) => {
+      event.exception?.values?.forEach((exception) => {
+        if (exception.value) exception.value = redact(exception.value);
+      });
+
+      return event;
+    },
     integrations: [
       Sentry.httpIntegration({ maxRequestBodySize: "none" }),
       // Sentry counts an error without an HTTP status as a 500. A ZodError has

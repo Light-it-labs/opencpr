@@ -2,7 +2,6 @@ import { type Request, type Response } from "express";
 import morgan from "morgan";
 
 import { logger } from "@/config";
-import { redactUrl } from "@/utils";
 
 export const write = (message: string) => logger.info(message);
 
@@ -13,7 +12,7 @@ export const httpLoggerFormat: morgan.FormatFn<Request, Response> = (
 ) =>
   [
     info.method?.(req, res),
-    redactUrl(info.url?.(req, res) ?? ""),
+    req.originalUrl.split("?")[0],
     info.status?.(req, res),
     info.res?.(req, res, "content-length"),
     "-",

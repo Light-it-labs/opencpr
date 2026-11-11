@@ -14,7 +14,6 @@ import {
   EmailJobData,
   SendEmailJobParams,
 } from "../queue/queue.service";
-import { toReportableEmailError } from "./reportable-error";
 import { sendMail } from "./transport";
 import { getResultsStats, renderResultsCard, renderTemplate } from "./utils";
 
@@ -92,7 +91,6 @@ const escapeHtml = (value: string) =>
  * off the login form, so it is escaped.
  */
 const sendAccessRequestNotice = async ({
-  adminId,
   requestedAt,
   requesterEmail,
   to,
@@ -115,11 +113,10 @@ const sendAccessRequestNotice = async ({
         ACCESS_REQUEST_TEMPLATE,
       ),
     });
-    logger.info({ action: "access_request_notice_sent", adminId });
+    logger.info({ action: "access_request_notice_sent", to });
   } catch (error) {
     logger.error({
-      detail: "Error sending access request notice",
-      adminId,
+      detail: `Error sending access request notice to ${to}`,
       error,
     });
     throw error;
@@ -220,21 +217,17 @@ emailWorker.on("failed", (job, error) => {
   }
 
   const kind = job.data.kind ?? EMAIL_JOB_KINDS.results;
-  const reportable = toReportableEmailError(error);
 
   Sentry.withScope((scope) => {
     scope.setTag("email_job_kind", kind);
-    scope.setTags(reportable.tags);
     scope.setExtras({
       jobId: job.id,
       attemptsMade: job.attemptsMade,
-      ...(job.data.kind === EMAIL_JOB_KINDS.accessRequestNotice
-        ? { adminId: job.data.adminId }
-        : {
-            participantId: job.data.participant.id,
-            sessionId: job.data.session.id,
-          }),
+      ...(job.data.kind !== EMAIL_JOB_KINDS.accessRequestNotice && {
+        participantId: job.data.participant.id,
+        sessionId: job.data.session.id,
+      }),
     });
-    Sentry.captureException(reportable.error);
+    Sentry.captureException(error);
   });
 });
