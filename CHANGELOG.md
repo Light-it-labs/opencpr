@@ -10,6 +10,10 @@ All notable changes to OpenCPR are listed here. The format follows [Keep a Chang
 
 - Spanish translation of the kiosk and the phone registration form. Each kiosk picks its language on the setup screen and keeps it per browser; a visitor's phone follows the phone's language and falls back to English.
 
+### Security
+
+- The kiosk no longer sends registration ids to Sentry: page, request and navigation URLs in errors, traces, breadcrumbs and session replays show `/r/:id` and `/cpr-sessions/:id` instead, without query strings or email addresses.
+
 ## [1.0.1] - 2026-11-05
 
 ### Security

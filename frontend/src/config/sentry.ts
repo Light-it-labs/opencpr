@@ -2,6 +2,13 @@ import * as Sentry from "@sentry/react";
 
 import { env } from "@/config/env";
 import { router } from "./router";
+import {
+  scrubBreadcrumb,
+  scrubEvent,
+  scrubRecordingEvent,
+  scrubReplayEvent,
+  scrubSpan,
+} from "./sentry-scrub";
 
 export const isSentryEnabled = Boolean(env.VITE_SENTRY_DSN);
 
@@ -18,6 +25,10 @@ const isExpectedNetworkNoise = (event: Sentry.ErrorEvent) => {
     value?.value?.includes("Network Error") ||
     value?.value?.includes("Failed to fetch")
   );
+};
+
+export const beforeSend = (event: Sentry.ErrorEvent) => {
+  return isExpectedNetworkNoise(event) ? null : scrubEvent(event);
 };
 
 export const initializeSentry = () => {
@@ -38,6 +49,7 @@ export const initializeSentry = () => {
         mask: ["[data-sentry-mask]"],
         maskAllInputs: true,
         blockAllMedia: true,
+        beforeAddRecordingEvent: scrubRecordingEvent,
       }),
     ],
     tracesSampleRate: 1.0,
@@ -53,10 +65,12 @@ export const initializeSentry = () => {
       httpBodies: [],
       urlQueryParams: false,
     },
-    beforeSend: (event) => {
-      return isExpectedNetworkNoise(event) ? null : event;
-    },
+    beforeSend,
+    beforeSendSpan: scrubSpan,
+    beforeBreadcrumb: scrubBreadcrumb,
   });
+
+  Sentry.addEventProcessor(scrubReplayEvent);
 };
 
 /**
