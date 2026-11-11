@@ -16,6 +16,7 @@ All notable changes to OpenCPR are listed here. The format follows [Keep a Chang
 
 ### Security
 
+- The kiosk no longer sends registration ids to Sentry: page, request and navigation URLs in errors, traces, breadcrumbs and session replays show `/r/:id` and `/cpr-sessions/:id` instead, without query strings or email addresses.
 - Saving a run now ignores any field the server owns (row id, timestamps, scores), caps a run at 60 compressions with bounded timing and depth values, and limits API request bodies to 16 kB.
 - Sign-in links are limited per user (one a minute, five an hour), so nobody can flood a staff inbox or keep canceling the real link, and admins get at most ten new access-request emails an hour; requests over that are still listed on the users page.
 - Failed database queries no longer send their values (admin session ids, emails, search terms) to Sentry or the API logs, and the API no longer records query strings.
