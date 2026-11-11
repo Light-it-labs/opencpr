@@ -189,7 +189,6 @@ export const CprSessionsLogic = {
     };
   },
 
-  /** The kiosk and location are the paired booth's, never the payload's. */
   create: async (data: CreateCprSession, kiosk: AuthenticatedKiosk) => {
     const location = await LocationsRepository.get(kiosk.locationId);
     if (!location) {
@@ -270,8 +269,7 @@ export const CprSessionsLogic = {
       }
     }
 
-    // Only what the kiosk shows. Any paired booth may send any publicId, so the
-    // run's ids and who played stay out of the answer, a replayed one included.
+    // Any paired booth may send any publicId, so the run's ids and who played stay out.
     return {
       publicId: session.publicId,
       position,

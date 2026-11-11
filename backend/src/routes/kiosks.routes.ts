@@ -19,7 +19,6 @@ KiosksRouter.get(
   requireRole(USER_ROLES.admin),
   tryCatchWrapper(KiosksController.list),
 );
-// Public: the code is the credential, so it is a guessing target.
 KiosksRouter.post(
   "/pair",
   perMinuteRateLimit(10),

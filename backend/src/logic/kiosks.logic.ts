@@ -35,7 +35,6 @@ export const KIOSK_MAINTENANCE_STATUS = "maintenance";
  */
 const KIOSK_MAINTENANCE_MAX_MS = 20 * 60 * 1000;
 
-/** 32 random bytes is 256 bits: not guessable, and 43 URL-safe characters. */
 const KIOSK_TOKEN_BYTES = 32;
 
 /** One answer for unknown, used and expired codes, so none can be told apart. */
@@ -77,12 +76,6 @@ export const withKioskStatus = (kiosk: KioskRow, now: Date) => {
 };
 
 export const KiosksLogic = {
-  /**
-   * Spends a one-time code from the portal and gives the booth the token it
-   * reports with from then on. The token is returned once and only its hash is
-   * stored. The code's row is locked and spent in the same transaction that
-   * pairs the kiosk, so a code pairs exactly one booth.
-   */
   pair: async ({ code, kioskId }: KioskPair) => {
     const codeHash = hashToken(normalizePairingCode(code));
     const token = randomBytes(KIOSK_TOKEN_BYTES).toString("base64url");
@@ -124,13 +117,7 @@ export const KiosksLogic = {
     };
   },
 
-  /**
-   * Heartbeats never create a kiosk: only pairing does, and the location is
-   * the one it paired with. The booth may have paired under its browser's own
-   * id before its board reported the id stored on the board; the first
-   * heartbeat under the board's id moves the row over, unless another kiosk
-   * already has that id. Returns the id the kiosk is stored under.
-   */
+  // A booth may pair under its browser's id before its board reports one; that first heartbeat moves the row.
   heartbeat: async (
     kiosk: AuthenticatedKiosk,
     reportedKioskId: string,

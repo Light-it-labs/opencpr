@@ -5,11 +5,7 @@ import { KioskHeartbeat } from "@/schemas";
 import { cprSessions, db, kioskAlerts, kiosks, type DbExecutor } from "../db";
 
 export const KiosksRepository = {
-  /**
-   * Creates the kiosk or takes over its row, replacing any earlier token, so
-   * pairing a booth again cuts off whatever held its previous token. deletedAt
-   * is cleared so a retired booth returns once it is paired again.
-   */
+  // deletedAt is cleared so a retired booth returns once it is paired again.
   pair: async (
     {
       kioskId,
@@ -42,12 +38,7 @@ export const KiosksRepository = {
       .where(eq(kiosks.kioskId, kioskId));
   },
 
-  /**
-   * Moves a kiosk, its alert state and its runs to a new id. False, with
-   * nothing moved, when any kiosk row (a retired one included) already has the
-   * new id. An alert state left behind by no kiosk is dropped first, since it
-   * would otherwise block the move.
-   */
+  // An alert state left behind by no kiosk would block the move, so it is dropped first.
   rekey: async (fromKioskId: string, toKioskId: string) =>
     await db.transaction(async (tx) => {
       const [taken] = await tx
@@ -77,10 +68,7 @@ export const KiosksRepository = {
       return true;
     }),
 
-  /**
-   * Leaves updatedAt alone: it is the kiosk's last-seen time, and revoking says
-   * nothing about whether the booth is up.
-   */
+  // Leaves updatedAt alone: it is the kiosk's last-seen time.
   revokePairing: async (kioskId: string) => {
     const [result] = await db
       .update(kiosks)

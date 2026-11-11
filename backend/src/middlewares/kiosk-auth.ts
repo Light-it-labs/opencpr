@@ -10,7 +10,6 @@ const BEARER_TOKEN = /^Bearer\s+(\S+)$/i;
 const notPairedError = () =>
   new UnauthorizedError("This kiosk is not paired. Pair it again from /setup.");
 
-/** For the calls a booth makes on its own: only a paired kiosk may continue. */
 export const kioskAuth =
   () => async (req: KioskRequest, _res: Response, next: NextFunction) => {
     try {
@@ -34,7 +33,6 @@ export const kioskAuth =
     }
   };
 
-/** For handlers behind kioskAuth(), where the kiosk is always present. */
 export const getKiosk = (req: KioskRequest) => {
   if (!req.kiosk) {
     throw notPairedError();

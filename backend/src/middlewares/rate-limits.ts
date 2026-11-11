@@ -47,10 +47,6 @@ export const generalRateLimit = rateLimit({
   },
 });
 
-/**
- * On top of the global limit, for unauthenticated endpoints that send email or
- * are guessing targets: each gets its own, tighter, budget.
- */
 export const perMinuteRateLimit = (limit: number) =>
   rateLimit({
     windowMs: milliseconds({ minutes: 1 }),

@@ -50,10 +50,7 @@ export const claimSessionSchema = z.object({
   email: z.email(),
 });
 
-/**
- * Reported by each booth so a broken one is visible without walking to it. The
- * location comes from the booth's pairing.
- */
+/** Reported by each booth so a broken one is visible without walking to it. */
 export const kioskHeartbeatSchema = z.object({
   /** Last serial status the kiosk observed, e.g. reading / no-signal. */
   serialStatus: z.string().max(32).nullish(),
