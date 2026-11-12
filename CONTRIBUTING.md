@@ -27,9 +27,8 @@ cd backend && nvm use && pnpm install && pnpm dev
 1. Branch off `main`: `feat/<short-name>`, `fix/<short-name>` or `docs/<short-name>`.
 2. Commit with [Conventional Commits](https://www.conventionalcommits.org) (`feat:`, `fix:`, `docs:`, `chore:` and so on). The commit hook rejects other messages, and the pre-commit hook lints and formats the staged files.
 3. Keep each pull request to one change. Large changes are easier to review split into steps.
-4. Add or update tests for kiosk logic in `frontend/` (`pnpm test`). The admin portal has no test suite by design.
-5. Update the docs in `docs/` when you change how something is built, configured or used.
-6. If you change a backend model, add a migration with `pnpm db:migrate:generate --name <change>`; never edit an applied one.
+4. Update the docs in `docs/` when you change how something is built, configured or used.
+5. If you change a backend model, add a migration with `pnpm db:migrate:generate --name <change>`; never edit an applied one.
 
 ## Checks
 
