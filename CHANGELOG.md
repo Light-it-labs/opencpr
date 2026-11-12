@@ -10,10 +10,16 @@ All notable changes to OpenCPR are listed here. The format follows [Keep a Chang
 
 - Spanish translation of the kiosk and the phone registration form. Each kiosk picks its language on the setup screen and keeps it per browser; a visitor's phone follows the phone's language and falls back to English.
 
+### Removed
+
+- The unused PM2 cluster config (`backend/ecosystem.config.cjs`). It ran one API process per CPU, and each process keeps its own rate-limit counters, so it multiplied every limit. The Docker image runs a single process.
+
 ### Security
 
+- The kiosk no longer sends registration ids to Sentry: page, request and navigation URLs in errors, traces, breadcrumbs and session replays show `/r/:id` and `/cpr-sessions/:id` instead, without query strings or email addresses.
 - Saving a run now ignores any field the server owns (row id, timestamps, scores), caps a run at 60 compressions with bounded timing and depth values, and limits API request bodies to 16 kB.
 - A participant now gets at most one results email every 30 seconds, and a registration stops filing runs under its participant 2 hours after it was claimed (later runs are still saved, unlinked). Adds the `participants.results_emailed_at` column.
+- Sign-in links are limited per user (one a minute, five an hour), so nobody can flood a staff inbox or keep canceling the real link, and admins get at most ten new access-request emails an hour; requests over that are still listed on the users page.
 - Failed database queries no longer send their values (admin session ids, emails, search terms) to Sentry or the API logs, and the API no longer records query strings.
 - The admin performance statistics group a person's runs in linear time, so a flood of runs under one registration can no longer stall the API when someone opens them.
 

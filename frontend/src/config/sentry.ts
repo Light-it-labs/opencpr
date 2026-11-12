@@ -2,6 +2,13 @@ import * as Sentry from "@sentry/react";
 
 import { env } from "@/config/env";
 import { router } from "./router";
+import {
+  scrubBreadcrumb,
+  scrubEvent,
+  scrubRecordingEvent,
+  scrubReplayEvent,
+  scrubSpan,
+} from "./sentry-scrub";
 
 export const isSentryEnabled = Boolean(env.VITE_SENTRY_DSN);
 
@@ -20,10 +27,29 @@ const isExpectedNetworkNoise = (event: Sentry.ErrorEvent) => {
   );
 };
 
+export const beforeSend = (event: Sentry.ErrorEvent) => {
+  return isExpectedNetworkNoise(event) ? null : scrubEvent(event);
+};
+
+export const recordsReplay = (pathname: string) => {
+  return !pathname.startsWith("/r/");
+};
+
 export const initializeSentry = () => {
   if (!isSentryEnabled) {
     return;
   }
+
+  const replay = recordsReplay(window.location.pathname)
+    ? [
+        Sentry.replayIntegration({
+          mask: ["[data-sentry-mask]"],
+          maskAllInputs: true,
+          blockAllMedia: true,
+          beforeAddRecordingEvent: scrubRecordingEvent,
+        }),
+      ]
+    : [];
 
   Sentry.init({
     dsn: env.VITE_SENTRY_DSN,
@@ -31,14 +57,7 @@ export const initializeSentry = () => {
     integrations: [
       Sentry.tanstackRouterBrowserTracingIntegration(router),
       Sentry.browserTracingIntegration(),
-      Sentry.replayIntegration({
-        // The registration form runs on the participant's own phone and collects
-        // a name and an email. Anything tagged data-sentry-mask is redacted in
-        // replays; inputs are masked everywhere as a second line of defense.
-        mask: ["[data-sentry-mask]"],
-        maskAllInputs: true,
-        blockAllMedia: true,
-      }),
+      ...replay,
     ],
     tracesSampleRate: 1.0,
     tracePropagationTargets: [new RegExp(env.VITE_SENTRY_TRACE_PROPAGATION_TARGET_REGEX)],
@@ -53,10 +72,12 @@ export const initializeSentry = () => {
       httpBodies: [],
       urlQueryParams: false,
     },
-    beforeSend: (event) => {
-      return isExpectedNetworkNoise(event) ? null : event;
-    },
+    beforeSend,
+    beforeSendSpan: scrubSpan,
+    beforeBreadcrumb: scrubBreadcrumb,
   });
+
+  Sentry.addEventProcessor(scrubReplayEvent);
 };
 
 /**

@@ -128,7 +128,7 @@ const startJob = async (job: ScheduledJob) => {
   try {
     await registerScheduler(queue, job);
   } catch (error) {
-    // Running on would leave alerting silently off, so die and let PM2 restart.
+    // Running on would leave alerting silently off, so die and let Docker restart it.
     logger.error({
       action: "job_scheduler_failed",
       queue: job.queueName,
@@ -141,8 +141,8 @@ const startJob = async (job: ScheduledJob) => {
 };
 
 /**
- * Safe to run from every process: the scheduler ids are fixed, so several PM2
- * instances upsert the same schedules instead of multiplying them. Each
+ * Safe to run from every process: the scheduler ids are fixed, so several API
+ * processes upsert the same schedules instead of multiplying them. Each
  * instance still runs workers, and BullMQ hands a given job to only one of
  * them.
  */
