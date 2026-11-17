@@ -8,6 +8,13 @@
       "when": 1792445129590,
       "tag": "0000_initial_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1794414449960,
+      "tag": "0001_participant_results_emailed_at",
+      "breakpoints": true
     }
   ]
 }

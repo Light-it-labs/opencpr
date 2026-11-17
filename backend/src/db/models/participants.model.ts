@@ -12,6 +12,7 @@ export const participants = m.mysqlTable("participants", {
   firstName: m.text("first_name").notNull(),
   lastName: m.text("last_name"),
   email: m.text().notNull(),
+  resultsEmailedAt: m.timestamp("results_emailed_at"),
   ...timestamps,
 });
 
